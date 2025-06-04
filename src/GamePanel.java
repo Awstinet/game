@@ -7,23 +7,33 @@ import java.awt.event.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 
 public class GamePanel extends JPanel implements Runnable, KeyListener {
 
     private Thread gameThread;
     private final int FPS = 60;
     private Player player;
+    private NPC npc;
     private BufferedImage background;
+
+    ArrayList<Integer> lastPos = new ArrayList<>();
 
     public GamePanel() {
         this.setPreferredSize(new Dimension(800, 600));
         this.setFocusable(true);
         this.addKeyListener(this);
 
+        npc = new NPC(100, 100, 32, 32);
+
         //Chargement du sprite du joueur.
         try {
             player = new Player(0, 0);
             player.spritePlayerLoader(1, 8); // 1 ligne, 8 colonnes
+
+            lastPos.add(0);
+            lastPos.add(0);
+
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -53,7 +63,19 @@ public class GamePanel extends JPanel implements Runnable, KeyListener {
             lastTime = currentTime;
 
             if (delta >= 1) {
-                update();
+                // Sauvegarde la position AVANT le déplacement
+                int lastX = player.getX();
+                int lastY = player.getY();
+
+                // Mise à jour (déplacement)
+                player.update();
+
+                // Vérifie la collision
+                if (player.collidesWithNPC(npc)) {
+                    // Si collision, rollback
+                    player.setPosition(lastX, lastY);
+                }
+
                 repaint();
                 delta--;
             }
@@ -83,6 +105,7 @@ public class GamePanel extends JPanel implements Runnable, KeyListener {
 
         // Dessiner le joueur
         player.draw(g2);
+        npc.draw(g2);
     }
 
 

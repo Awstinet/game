@@ -5,6 +5,7 @@ import java.awt.event.KeyEvent;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 
 import javax.imageio.ImageIO;
 
@@ -45,6 +46,7 @@ public class Player {
 
     public void draw(Graphics g) {
         g.drawImage(sprites[0], x, y, null); // Affiche la première frame
+        g.setColor(Color.RED);
     }
 
     public void keyPressed(KeyEvent e) {
@@ -66,4 +68,24 @@ public class Player {
     public int getX() { return x; }
     public int getY() { return y; }
 
+    public void setPosition(int nx, int ny){
+        this.x = nx;
+        this.y = ny;
+    }
+
+
+    public boolean collidesWithNPC(NPC npc) {
+        Rectangle playerRect = new Rectangle(x + 38, y + 40, 20, 20); // 64x64 sprite, hitbox centrée bas
+
+        Rectangle npcRect = new Rectangle(npc.getX(), npc.getY(), npc.getWidth(), npc.getHeight());
+        return playerRect.intersects(npcRect);
+    }
+
+    public ArrayList<Integer> getLastPosition(){
+        ArrayList<Integer> coordinates = new ArrayList<Integer>();
+        coordinates.add(getX());
+        coordinates.add(getY());
+        return coordinates;
+    }
+    
 }
