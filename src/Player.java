@@ -49,18 +49,18 @@ public class Player {
 
     public void keyPressed(KeyEvent e) {
         int code = e.getKeyCode();
-        if (code == KeyEvent.VK_LEFT) left = true;
-        if (code == KeyEvent.VK_RIGHT) right = true;
-        if (code == KeyEvent.VK_UP) up = true;
-        if (code == KeyEvent.VK_DOWN) down = true;
+        if (code == KeyEvent.VK_Q) left = true;
+        if (code == KeyEvent.VK_D) right = true;
+        if (code == KeyEvent.VK_Z) up = true;
+        if (code == KeyEvent.VK_S) down = true;
     }
 
     public void keyReleased(KeyEvent e) {
         int code = e.getKeyCode();
-        if (code == KeyEvent.VK_LEFT) left = false;
-        if (code == KeyEvent.VK_RIGHT) right = false;
-        if (code == KeyEvent.VK_UP) up = false;
-        if (code == KeyEvent.VK_DOWN) down = false;
+        if (code == KeyEvent.VK_Q) left = false;
+        if (code == KeyEvent.VK_D) right = false;
+        if (code == KeyEvent.VK_Z) up = false;
+        if (code == KeyEvent.VK_S) down = false;
     }
 
     public int getX() { return x; }
