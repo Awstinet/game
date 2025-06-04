@@ -16,7 +16,7 @@ public class GamePanel extends JPanel implements Runnable, KeyListener {
     private BufferedImage background;
 
     public GamePanel() {
-        this.setPreferredSize(new Dimension(800, 600));
+        this.setPreferredSize(new Dimension(400, 600));
         this.setFocusable(true);
         this.addKeyListener(this);
 
