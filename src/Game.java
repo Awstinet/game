@@ -15,6 +15,5 @@ public class Game {
         frame.setVisible(true);
 
         panel.startGame(); // Lancement de la boucle de jeu
-        System.out.println("Test abababa");
     }
 }
