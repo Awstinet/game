@@ -20,12 +20,12 @@ public class Player {
     public Player(int x, int y) throws IOException {
         this.x = x;
         this.y = y;
-        spriteSheet = ImageIO.read(new File("assets/sprites/Soldier-Walk.png"));
+        spriteSheet = ImageIO.read(new File("assets/sprites/playerSprite.png"));
     }
 
     public void spritePlayerLoader(int rows, int columns) {
-        int spriteWidth = 64;
-        int spriteHeight = 64;
+        int spriteWidth = 16;
+        int spriteHeight = 16;
         sprites = new BufferedImage[rows * columns];
 
         for (int i = 0; i < rows; i++) {
@@ -38,15 +38,18 @@ public class Player {
     }
 
     public void update() {
-        if (left) x -= speed;
-        if (right) x += speed;
-        if (up) y -= speed;
-        if (down) y += speed;
+
+        int spriteWidth = 16;
+        int spriteHeight = 16;
+
+        if (left && x - speed >= 0) x -= speed;
+        if (right && x + speed + spriteWidth <= 1600) x += speed;
+        if (up && y - speed >= 0) y -= speed;
+        if (down && y + speed + spriteHeight <= 1200) y += speed;
     }
 
     public void draw(Graphics g) {
         g.drawImage(sprites[0], x, y, null); // Affiche la première frame
-        g.setColor(Color.RED);
     }
 
     public void keyPressed(KeyEvent e) {
@@ -75,7 +78,7 @@ public class Player {
 
 
     public boolean collidesWithNPC(NPC npc) {
-        Rectangle playerRect = new Rectangle(x + 38, y + 40, 20, 20); // 64x64 sprite, hitbox centrée bas
+        Rectangle playerRect = new Rectangle(x, y, 16, 16);
 
         Rectangle npcRect = new Rectangle(npc.getX(), npc.getY(), npc.getWidth(), npc.getHeight());
         return playerRect.intersects(npcRect);
