@@ -29,7 +29,7 @@ public class GamePanel extends JPanel implements Runnable, KeyListener {
         //Chargement du sprite du joueur.
         try {
             player = new Player(0, 0);
-            player.spritePlayerLoader(1, 8); // 1 ligne, 8 colonnes
+            player.spritePlayerLoader(1, 1); // 1 ligne, 8 colonnes
 
             lastPos.add(0);
             lastPos.add(0);
