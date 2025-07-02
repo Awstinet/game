@@ -24,12 +24,12 @@ public class GamePanel extends JPanel implements Runnable, KeyListener {
         this.setFocusable(true);
         this.addKeyListener(this);
 
-        npc = new NPC(100, 100, 32, 32);
+        npc = new NPC(100, 100, 32, 32, 100, 100, 300, 100, 300, 300, 100, 300 );
 
         //Chargement du sprite du joueur.
         try {
             player = new Player(0, 0);
-            player.spritePlayerLoader(1, 1); // 1 ligne, 8 colonnes
+            player.spritePlayerLoader(1, 1); // 1 ligne, 1 colonne
 
             lastPos.add(0);
             lastPos.add(0);
@@ -74,6 +74,9 @@ public class GamePanel extends JPanel implements Runnable, KeyListener {
                 if (player.collidesWithNPC(npc)) {
                     // Si collision, rollback
                     player.setPosition(lastX, lastY);
+                }
+                else{
+                    npc.npcMove();
                 }
 
                 repaint();
