@@ -22,6 +22,7 @@ public class NPC {
         this.dialogs = dialogs;
         this.hasTalk = false;
 
+        //Intègre toutes les coordonnées du NPC dans un ArrayList
         for (int i = 0; i < cos.length-1; i+=2){
             ArrayList<Integer> tempArray = new ArrayList<>();
             tempArray.add(cos[i]);
@@ -29,7 +30,7 @@ public class NPC {
             this.cosMove.add(tempArray);
         }
 
-        this.nbPoint = this.cosMove.size();
+        this.nbPoint = this.cosMove.size(); //Nombre de coordonnées différentes
     }
 
     public void draw(Graphics g) {
@@ -46,17 +47,20 @@ public class NPC {
 
 
     public void npcMove(){
+        //Si aucun point (NPC ne bouge pas), on fait rien.
         if (nbPoint == 0){
             return;
         }
 
-        ArrayList<Integer> target = cosMove.get(currentPoint);
+        ArrayList<Integer> target = cosMove.get(currentPoint); //on récupère le point dans lequel il va aller
         int targetX = target.get(0);
         int targetY = target.get(1);
 
         int speed = 1;
 
-        // Déplacement sur l'axe X
+        //A enlever dans le futur : Changement de couleur, mais faut lui ajouter son sprite avant ça.
+
+        //Déplacement sur l'axe X
         if (x < targetX) {
             color = new Color(0,255,0);
             x += speed;
@@ -67,7 +71,7 @@ public class NPC {
             if (x < targetX) x = targetX;
         }
 
-        // Déplacement sur l'axe Y
+        //Déplacement sur l'axe Y
         if (y < targetY) {
             y += speed;
             color = new Color(125,125,200);
@@ -78,22 +82,34 @@ public class NPC {
             if (y < targetY) y = targetY;
         }
 
-        // Une fois arrivé au point cible, passer au suivant
+        //Une fois arrivé au point cible, il passe au suivant
         if (x == targetX && y == targetY) {
             currentPoint = (currentPoint + 1) % nbPoint;
         }
     }
 
-    
-    public void allDialogs(){
-        for (String d : dialogs){
-            System.out.println(d);
-        }
+    //Récupère tous ses dialogues et les affiches. Change le statut de hasTalk pour pas qu'il se répète indéfiniment.
+    public ArrayList<String> allDialogs(){
+        return dialogs;
+    }
+
+    //Change le statut de hasTalk en true.
+    public void markTalked(){
         hasTalk = true;
     }
 
     public boolean hasTalk() {return hasTalk;}
     public void resetTalk() {hasTalk = false;}
+
+    //Si il proche du joueur.
+    public boolean isNear(Player p) {
+        int dx = this.x - p.getX();
+        int dy = this.y - p.getY();
+        int distanceSquared = dx * dx + dy * dy;
+
+        int proximityThreshold = 40; //Distance en pixel
+        return distanceSquared <= proximityThreshold * proximityThreshold;
+    }
 
 
 

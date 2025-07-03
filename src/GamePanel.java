@@ -9,6 +9,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.awt.geom.AffineTransform;
 
 public class GamePanel extends JPanel implements Runnable, KeyListener {
 
@@ -17,6 +18,7 @@ public class GamePanel extends JPanel implements Runnable, KeyListener {
     private Player player;
     private NPC npc;
     private BufferedImage background;
+    private int currentDialogIndex = 0;
 
     ArrayList<Integer> lastPos = new ArrayList<>();
     private BufferedImage dialogBox;
@@ -67,24 +69,21 @@ public class GamePanel extends JPanel implements Runnable, KeyListener {
             lastTime = currentTime;
 
             if (delta >= 1) {
-                // Sauvegarde la position AVANT le déplacement
+                //Sauvegarde la position AVANT le déplacement
                 int lastX = player.getX();
                 int lastY = player.getY();
 
-                // Mise à jour (déplacement)
+                //Mise à jour (déplacement)
                 player.update();
 
-                // Vérifie la collision
+                //Vérifie la collision
                 if (player.collidesWithNPC(npc)) {
-                    // Si collision, rollback
+                    //Si collision, rollback
                     player.setPosition(lastX, lastY);
-                    if(!(npc.hasTalk())){
-                        npc.allDialogs();
-                    }
                 }
+                //Si pas collision, le npc bouge et son dialogue est reset.
                 else{
                     npc.npcMove();
-                    npc.resetTalk();
                 }
 
                 repaint();
@@ -98,18 +97,19 @@ public class GamePanel extends JPanel implements Runnable, KeyListener {
     }
 
 
-    protected void showDialogBox(Graphics g){
-        g.drawImage(dialogBox, 0, 0, null);
-    }
-
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
         Graphics2D g2 = (Graphics2D) g;
 
+        //Fond noir
         g2.setColor(Color.BLACK);
         g2.fillRect(0, 0, getWidth(), getHeight());
 
+        //Sauvegarde la transform de base (écran)
+        AffineTransform originalTransform = g2.getTransform();
+
+        //Appliquer translation + zoom pour la "vue monde"
         double zoom = 2.0;
         int screenCenterX = getWidth() / 2;
         int screenCenterY = getHeight() / 2;
@@ -119,18 +119,81 @@ public class GamePanel extends JPanel implements Runnable, KeyListener {
         g2.translate(translateX, translateY);
         g2.scale(zoom, zoom);
 
-        // Dessiner le fond
+        //Dessin de la map et du monde
         g2.drawImage(background, 0, 0, null);
-
-        // Dessiner le joueur
         player.draw(g2);
         npc.draw(g2);
+
+        //Si le joueur est à proximité du NPC, on affiche une message comme quoi il peut lui parler.
+        if (npc.isNear(player)){
+            g2.setColor(Color.WHITE);
+            g2.setFont(new Font("Arial", Font.PLAIN, 10));
+            g2.drawString("Appuyez sur [E] pour parler", npc.getX()-45, npc.getY()-10);
+        }
+
+
+
+        // ------ Revenir en coordonnées écran ------
+        g2.setTransform(originalTransform);
+
+        //Affichage de la boîte de dialogue à l’écran, en bas au centre
+        if (npc.isNear(player)) {
+            if (player.isTalking() && !npc.hasTalk()) {
+
+                int width = (int)(dialogBox.getWidth() * zoom);
+                int height = (int)(dialogBox.getHeight() * zoom);
+
+                int dialogX = (getWidth() - width) / 2;
+                int dialogY = getHeight() - height - 20;
+
+                //Affiche la boîte de dialogue centrée en bas
+                g2.drawImage(dialogBox, dialogX, dialogY, width, height, null);
+
+                //Récupère les dialogues à afficher
+                ArrayList<String> lines = new ArrayList<>();
+                lines.add(npc.allDialogs().get(currentDialogIndex));
+
+                g2.setColor(Color.BLACK);
+                g2.setFont(new Font("Arial", Font.PLAIN, 16));
+                FontMetrics fm = g2.getFontMetrics();
+
+                int lineHeight = fm.getHeight();
+
+                //Calcule la hauteur totale du texte
+                int totalTextHeight = lines.size() * lineHeight;
+
+                //Texte verticalement centré dans la boîte
+                int lineY = dialogY + (height - totalTextHeight) / 2 + fm.getAscent();
+
+                for (String line : lines) {
+                    g2.drawString(line, dialogX + 50, lineY);
+                    lineY += lineHeight;
+                }
+            }
+
+        }
     }
+
 
 
 
     @Override
     public void keyPressed(KeyEvent e) {
+        if (e.getKeyCode() == KeyEvent.VK_E && npc.isNear(player)) {
+            if (!player.isTalking()) {
+                player.changeTalk();
+                currentDialogIndex = 0; //Démarrer au début du dialogue
+            } else {
+                currentDialogIndex++;
+                if (currentDialogIndex >= npc.allDialogs().size()) {
+                    //Fin du dialogue
+                    player.changeTalk();
+                    npc.resetTalk();
+                    currentDialogIndex = 0;
+                }
+            }
+        }
+
         player.keyPressed(e);
     }
 

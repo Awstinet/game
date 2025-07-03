@@ -13,6 +13,7 @@ public class Player {
     private int x, y;
     private int speed = 2;
     private boolean left, right, up, down;
+    private boolean talk = false;
 
     private BufferedImage spriteSheet;
     private BufferedImage[] sprites;
@@ -89,6 +90,14 @@ public class Player {
         coordinates.add(getX());
         coordinates.add(getY());
         return coordinates;
+    }
+
+    public boolean isTalking(){
+        return talk;
+    }
+
+    public void changeTalk(){
+        talk = (talk == true) ? talk = false : true;
     }
     
 }
