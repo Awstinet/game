@@ -10,13 +10,17 @@ public class NPC {
     private int currentPoint = 0;
     private int nbPoint;
     private Color color;
+    private ArrayList<String> dialogs = new ArrayList<String>();
+    private boolean hasTalk;
 
-    public NPC(int x, int y, int width, int height, int... cos) {
+    public NPC(int x, int y, int width, int height, ArrayList<String> dialogs, int... cos) {
         this.x = x;
         this.y = y;
         this.width = width;
         this.height = height;
         this.color = new Color(255,0,0);
+        this.dialogs = dialogs;
+        this.hasTalk = false;
 
         for (int i = 0; i < cos.length-1; i+=2){
             ArrayList<Integer> tempArray = new ArrayList<>();
@@ -36,12 +40,12 @@ public class NPC {
 
     public int getX() {return x;}
     public int getY() {return y;}
+
     public int getWidth() {return width;}
     public int getHeight() {return height;}
 
 
     public void npcMove(){
-
         if (nbPoint == 0){
             return;
         }
@@ -79,6 +83,19 @@ public class NPC {
             currentPoint = (currentPoint + 1) % nbPoint;
         }
     }
+
+    
+    public void allDialogs(){
+        for (String d : dialogs){
+            System.out.println(d);
+        }
+        hasTalk = true;
+    }
+
+    public boolean hasTalk() {return hasTalk;}
+    public void resetTalk() {hasTalk = false;}
+
+
 
 }
 

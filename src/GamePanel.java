@@ -8,6 +8,7 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
 
 public class GamePanel extends JPanel implements Runnable, KeyListener {
 
@@ -18,13 +19,15 @@ public class GamePanel extends JPanel implements Runnable, KeyListener {
     private BufferedImage background;
 
     ArrayList<Integer> lastPos = new ArrayList<>();
+    private BufferedImage dialogBox;
+
 
     public GamePanel() {
         this.setPreferredSize(new Dimension(800, 600));
         this.setFocusable(true);
         this.addKeyListener(this);
 
-        npc = new NPC(100, 100, 32, 32, 100, 100, 300, 100, 300, 300, 100, 300 );
+        npc = new NPC(100, 100, 32, 32, new ArrayList<String>(List.of("Bonjour", "Caca", "ABABABA")), 100 ,100, 300, 100, 300, 300, 100, 300 );
 
         //Chargement du sprite du joueur.
         try {
@@ -38,9 +41,10 @@ public class GamePanel extends JPanel implements Runnable, KeyListener {
             e.printStackTrace();
         }
 
-        //Chargement du background
+        //Chargement du background & de la boîte de dialogue
         try {
             background = ImageIO.read(new File("assets/maps/mapPaint.png"));
+            dialogBox = ImageIO.read(new File("assets/sprites/dialog_box.png"));
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -74,9 +78,13 @@ public class GamePanel extends JPanel implements Runnable, KeyListener {
                 if (player.collidesWithNPC(npc)) {
                     // Si collision, rollback
                     player.setPosition(lastX, lastY);
+                    if(!(npc.hasTalk())){
+                        npc.allDialogs();
+                    }
                 }
                 else{
                     npc.npcMove();
+                    npc.resetTalk();
                 }
 
                 repaint();
@@ -87,6 +95,11 @@ public class GamePanel extends JPanel implements Runnable, KeyListener {
 
     public void update() {
         player.update();
+    }
+
+
+    protected void showDialogBox(Graphics g){
+        g.drawImage(dialogBox, 0, 0, null);
     }
 
     @Override
