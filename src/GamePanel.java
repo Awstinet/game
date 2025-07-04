@@ -23,6 +23,8 @@ public class GamePanel extends JPanel implements Runnable, KeyListener {
     ArrayList<Integer> lastPos = new ArrayList<>();
     private BufferedImage dialogBox;
 
+    private Font dialogFont;
+
 
     public GamePanel() {
         this.setPreferredSize(new Dimension(800, 600));
@@ -50,6 +52,20 @@ public class GamePanel extends JPanel implements Runnable, KeyListener {
         } catch (IOException e) {
             e.printStackTrace();
         }
+
+        //Pour charger la police décriture des dialogues.
+        try {
+            File fontFile = new File("assets/fonts/pixelify/PixelifySans-SemiBold.ttf");
+            Font pixelifyFont = Font.createFont(Font.TRUETYPE_FONT, fontFile);
+            dialogFont = pixelifyFont.deriveFont(Font.PLAIN, 22);
+        }
+        catch (FontFormatException | IOException e){
+            e.printStackTrace();
+            dialogFont = new Font("Arial", Font.PLAIN, 22);
+        }
+        
+
+
     }
 
     public void startGame() {
@@ -154,7 +170,7 @@ public class GamePanel extends JPanel implements Runnable, KeyListener {
                 lines.add(npc.allDialogs().get(currentDialogIndex));
 
                 g2.setColor(Color.BLACK);
-                g2.setFont(new Font("Arial", Font.PLAIN, 16));
+                g2.setFont(dialogFont);
                 FontMetrics fm = g2.getFontMetrics();
 
                 int lineHeight = fm.getHeight();
