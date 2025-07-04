@@ -15,26 +15,26 @@ public class GamePanel extends JPanel implements Runnable, KeyListener {
 
     private Thread gameThread;
     private final int FPS = 60;
+
     private Player player;
     private NPC npc;
     private BufferedImage background;
-    private int currentDialogIndex = 0;
+    
 
     ArrayList<Integer> lastPos = new ArrayList<Integer>();
 
     private BufferedImage dialogBox;
     private Font dialogFont;
+    private int currentDialogIndex = 0;
 
     private ArrayList<Obstacle> obstacles = new ArrayList<Obstacle>();
-    private BufferedImage arbre;
+    private BufferedImage arbreImg, rockImg;
 
 
     public GamePanel() {
         this.setPreferredSize(new Dimension(800, 600));
         this.setFocusable(true);
         this.addKeyListener(this);
-
-        npc = new NPC(100, 100, 32, 32, new ArrayList<String>(List.of("Bonjour", "Caca", "ABABABA")), 100 ,100, 300, 100, 300, 300, 100, 300 );
 
         //Chargement du sprite du joueur.
         try {
@@ -48,11 +48,15 @@ public class GamePanel extends JPanel implements Runnable, KeyListener {
             e.printStackTrace();
         }
 
-        //Chargement du background, de la boîte de dialogue et de la police d'écriture des dialogues
+        //Chargement des NPCs
+        npc = new NPC(100, 100, 32, 32, new ArrayList<String>(List.of("Bonjour", "Caca", "ABABABA")), 100 ,100, 300, 100, 300, 300, 100, 300 );
+
+        //Chargement du background (et obstacles), de la boîte de dialogue et de la police d'écriture des dialogues
         try {
             background = ImageIO.read(new File("assets/maps/mapPaint.png"));
             dialogBox = ImageIO.read(new File("assets/sprites/divers/dialog_box.png"));
-            arbre = ImageIO.read(new File("assets/sprites/obstacles/arbre.png"));
+            arbreImg = ImageIO.read(new File("assets/sprites/obstacles/arbre.png"));
+            rockImg = ImageIO.read(new File("assets/sprites/obstacles/rocher.png"));
 
 
             File fontFile = new File("assets/fonts/pixelify/PixelifySans-SemiBold.ttf");
@@ -66,8 +70,9 @@ public class GamePanel extends JPanel implements Runnable, KeyListener {
             }
         }     
         
-
-        obstacles.add(new Obstacle(32, 32, 56, 48, arbre));
+        //Ajour des obstacles dans notre ArrayList
+        obstacles.add(new Arbre(32, 32, 56, 48, 22, 11, 22, arbreImg));
+        obstacles.add(new Obstacle(100, 100, 32, 10, rockImg));
 
 
     }
@@ -99,6 +104,7 @@ public class GamePanel extends JPanel implements Runnable, KeyListener {
                 boolean hasCollided = false;
                 Rectangle playerBounds = new Rectangle(player.getX(), player.getY(), 16, 16);
 
+                //Si le rectangle du joueur entre en collision avec celui d'un obstacle, on change la valeur de hasCollised.
                 for (Obstacle obs : obstacles){
                     if (playerBounds.intersects(obs.getBounds())){
                         hasCollided = true;
@@ -157,9 +163,22 @@ public class GamePanel extends JPanel implements Runnable, KeyListener {
 
         //Dessin de la map et du monde
         g2.drawImage(background, 0, 0, null);
-        for (Obstacle obs : obstacles){obs.draw(g2);}
+
+        for (Obstacle obs : obstacles) {
+            if (obs instanceof Arbre) {
+                ((Arbre) obs).drawTrunk(g2);
+            } else {
+                obs.draw(g2);
+            }
+        }
         player.draw(g2);
         npc.draw(g2);
+
+        for (Obstacle obs : obstacles) {
+            if (obs instanceof Arbre) {
+                ((Arbre) obs).drawFoliage(g2);
+            }
+        }
 
         //Si le joueur est à proximité du NPC, on affiche une message comme quoi il peut lui parler.
         if (npc.isNear(player)){
@@ -170,7 +189,7 @@ public class GamePanel extends JPanel implements Runnable, KeyListener {
 
 
 
-        // ------ Revenir en coordonnées écran ------
+        //Retour en "coordonnées écran"
         g2.setTransform(originalTransform);
 
         //Affichage de la boîte de dialogue à l’écran, en bas au centre

@@ -5,8 +5,8 @@ import java.awt.image.BufferedImage;
 
 public class Obstacle {
     
-    private int x, y, width, height;
-    private BufferedImage image; //À changer par une image quand ce sera près.
+    public int x, y, width, height;
+    public BufferedImage image;
 
     public Obstacle(int x, int y, int width, int height, BufferedImage image){
         this.x = x;
@@ -23,5 +23,4 @@ public class Obstacle {
     public Rectangle getBounds(){
         return new Rectangle(x, y, width, height);
     }
-
 }
