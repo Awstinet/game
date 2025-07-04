@@ -45,25 +45,21 @@ public class GamePanel extends JPanel implements Runnable, KeyListener {
             e.printStackTrace();
         }
 
-        //Chargement du background & de la boîte de dialogue
+        //Chargement du background, de la boîte de dialogue et de la police d'écriture des dialogues
         try {
             background = ImageIO.read(new File("assets/maps/mapPaint.png"));
             dialogBox = ImageIO.read(new File("assets/sprites/dialog_box.png"));
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
 
-        //Pour charger la police décriture des dialogues.
-        try {
             File fontFile = new File("assets/fonts/pixelify/PixelifySans-SemiBold.ttf");
             Font pixelifyFont = Font.createFont(Font.TRUETYPE_FONT, fontFile);
             dialogFont = pixelifyFont.deriveFont(Font.PLAIN, 22);
-        }
-        catch (FontFormatException | IOException e){
+
+        } catch (Exception e) {
             e.printStackTrace();
-            dialogFont = new Font("Arial", Font.PLAIN, 22);
-        }
-        
+            if (e instanceof FontFormatException){
+                dialogFont = new Font("Arial", Font.PLAIN, 22);
+            }
+        }      
 
 
     }
