@@ -93,7 +93,7 @@ public class GamePanel extends JPanel implements Runnable, KeyListener {
                     //Si collision, rollback
                     player.setPosition(lastX, lastY);
                 }
-                //Si pas collision, le npc bouge et son dialogue est reset.
+                //Si pas collision, le npc bouge.
                 else{
                     npc.npcMove();
                 }
