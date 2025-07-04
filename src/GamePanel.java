@@ -20,10 +20,13 @@ public class GamePanel extends JPanel implements Runnable, KeyListener {
     private BufferedImage background;
     private int currentDialogIndex = 0;
 
-    ArrayList<Integer> lastPos = new ArrayList<>();
-    private BufferedImage dialogBox;
+    ArrayList<Integer> lastPos = new ArrayList<Integer>();
 
+    private BufferedImage dialogBox;
     private Font dialogFont;
+
+    private ArrayList<Obstacle> obstacles = new ArrayList<Obstacle>();
+    private BufferedImage arbre;
 
 
     public GamePanel() {
@@ -48,7 +51,9 @@ public class GamePanel extends JPanel implements Runnable, KeyListener {
         //Chargement du background, de la boîte de dialogue et de la police d'écriture des dialogues
         try {
             background = ImageIO.read(new File("assets/maps/mapPaint.png"));
-            dialogBox = ImageIO.read(new File("assets/sprites/dialog_box.png"));
+            dialogBox = ImageIO.read(new File("assets/sprites/divers/dialog_box.png"));
+            arbre = ImageIO.read(new File("assets/sprites/obstacles/arbre.png"));
+
 
             File fontFile = new File("assets/fonts/pixelify/PixelifySans-SemiBold.ttf");
             Font pixelifyFont = Font.createFont(Font.TRUETYPE_FONT, fontFile);
@@ -59,7 +64,10 @@ public class GamePanel extends JPanel implements Runnable, KeyListener {
             if (e instanceof FontFormatException){
                 dialogFont = new Font("Arial", Font.PLAIN, 22);
             }
-        }      
+        }     
+        
+
+        obstacles.add(new Obstacle(32, 32, 56, 48, arbre));
 
 
     }
@@ -88,7 +96,23 @@ public class GamePanel extends JPanel implements Runnable, KeyListener {
                 //Mise à jour (déplacement)
                 player.update();
 
-                //Vérifie la collision
+                boolean hasCollided = false;
+                Rectangle playerBounds = new Rectangle(player.getX(), player.getY(), 16, 16);
+
+                for (Obstacle obs : obstacles){
+                    if (playerBounds.intersects(obs.getBounds())){
+                        hasCollided = true;
+                        break;
+                    }
+                }
+
+
+                //Vérifie la collision avec un obstacle
+                if(hasCollided){
+                    player.setPosition(lastX, lastY);
+                }
+
+                //Vérifie la collision avec un NPC
                 if (player.collidesWithNPC(npc)) {
                     //Si collision, rollback
                     player.setPosition(lastX, lastY);
@@ -133,6 +157,7 @@ public class GamePanel extends JPanel implements Runnable, KeyListener {
 
         //Dessin de la map et du monde
         g2.drawImage(background, 0, 0, null);
+        for (Obstacle obs : obstacles){obs.draw(g2);}
         player.draw(g2);
         npc.draw(g2);
 

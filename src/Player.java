@@ -21,7 +21,7 @@ public class Player {
     public Player(int x, int y) throws IOException {
         this.x = x;
         this.y = y;
-        spriteSheet = ImageIO.read(new File("assets/sprites/chevalierTest.png"));
+        spriteSheet = ImageIO.read(new File("assets/sprites/personnages/chevalierTest.png"));
     }
 
     public void spritePlayerLoader(int rows, int columns) {
