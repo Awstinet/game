@@ -1,0 +1,25 @@
+- Changement de carte
+
+- Ennemi :
+    - Pouvoir dialoguer avec lui
+    - Se battre avec
+    - Détection ou non selon si on est caché par un obstacle
+
+- Attaques (de près & de loin)
+
+- NPC allié
+    - Me suit
+    - M'aide à attaquer
+    - Dialogues à des moments clefs
+
+- Menu, inventaire, outils utilisables
+
+- Animation de sprite quand on marche, quand on attaque (pour joueur & pnjs)
+
+- Mettre de la musique au jeu
+
+- Cinématiques
+
+- Sauvegardes avec liaison BDD ou Json
+
+
