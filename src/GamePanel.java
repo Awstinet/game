@@ -18,7 +18,7 @@ public class GamePanel extends JPanel implements Runnable, KeyListener {
 
     private Player player;
     private NPC npc;
-    private BufferedImage background;
+    // private BufferedImage background;
     
 
     ArrayList<Integer> lastPos = new ArrayList<Integer>();
@@ -29,6 +29,8 @@ public class GamePanel extends JPanel implements Runnable, KeyListener {
 
     private ArrayList<Obstacle> obstacles = new ArrayList<Obstacle>();
     private BufferedImage arbreImg, rockImg;
+
+    private Map mapTest;
 
 
     public GamePanel() {
@@ -51,9 +53,11 @@ public class GamePanel extends JPanel implements Runnable, KeyListener {
         //Chargement des NPCs
         npc = new NPC(100, 100, 32, 32, new ArrayList<String>(List.of("Bonjour", "Caca", "ABABABA")), 100 ,100, 300, 100, 300, 300, 100, 300 );
 
+        mapTest = new Map("test", 1600, 1200, "assets/maps/mapPaint.png");
+
         //Chargement du background (et obstacles), de la boîte de dialogue et de la police d'écriture des dialogues
         try {
-            background = ImageIO.read(new File("assets/maps/mapPaint.png"));
+            // background = ImageIO.read(new File("assets/maps/mapPaint.png"));
             dialogBox = ImageIO.read(new File("assets/sprites/divers/dialog_box.png"));
             arbreImg = ImageIO.read(new File("assets/sprites/obstacles/arbre.png"));
             rockImg = ImageIO.read(new File("assets/sprites/obstacles/rocher.png"));
@@ -162,7 +166,7 @@ public class GamePanel extends JPanel implements Runnable, KeyListener {
         g2.scale(zoom, zoom);
 
         //Dessin de la map et du monde
-        g2.drawImage(background, 0, 0, null);
+        mapTest.draw(g2);
 
         for (Obstacle obs : obstacles) {
             if (obs instanceof Arbre) {
