@@ -16,7 +16,9 @@
 
 - Menu, inventaire, outils utilisables
 
-- Animation de sprite quand on marche, quand on attaque (pour joueur & pnjs)
+- Items trouvables en jeu (coffres, trucs comme ça)
+
+- Animation de sprite quand on marche, quand on attaque (pour joueur & pnjs), quand on loot un item, quand une animation est nécessaire en bref.
 
 - Mettre de la musique au jeu
 
