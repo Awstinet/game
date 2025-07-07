@@ -1,5 +1,7 @@
 - Changement de carte
 
+- Mettre un sprite au NPC et adapter le code pour qu'il ressemble à celui des obstacles.
+
 - Ennemi :
     - Pouvoir dialoguer avec lui
     - Se battre avec
@@ -20,6 +22,4 @@
 
 - Cinématiques
 
-- Sauvegardes avec liaison BDD ou Json
-
-
+- Sauvegardes avec liaison BDD ou Json (en local)

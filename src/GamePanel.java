@@ -18,8 +18,6 @@ public class GamePanel extends JPanel implements Runnable, KeyListener {
 
     private Player player;
     private NPC npc;
-    // private BufferedImage background;
-    
 
     ArrayList<Integer> lastPos = new ArrayList<Integer>();
 
@@ -27,10 +25,9 @@ public class GamePanel extends JPanel implements Runnable, KeyListener {
     private Font dialogFont;
     private int currentDialogIndex = 0;
 
-    private ArrayList<Obstacle> obstacles = new ArrayList<Obstacle>();
     private BufferedImage arbreImg, rockImg;
 
-    private Map mapTest;
+    private Map actualMap;
 
 
     public GamePanel() {
@@ -43,21 +40,17 @@ public class GamePanel extends JPanel implements Runnable, KeyListener {
             player = new Player(0, 0);
             player.spritePlayerLoader(1, 1); // 1 ligne, 1 colonne
 
-            lastPos.add(0);
-            lastPos.add(0);
+            lastPos.add(0); //Coordonnée X
+            lastPos.add(0); //Coordonnée Y
 
         } catch (IOException e) {
             e.printStackTrace();
         }
 
-        //Chargement des NPCs
-        npc = new NPC(100, 100, 32, 32, new ArrayList<String>(List.of("Bonjour", "Caca", "ABABABA")), 100 ,100, 300, 100, 300, 300, 100, 300 );
-
-        mapTest = new Map("test", 1600, 1200, "assets/maps/mapPaint.png");
+        
 
         //Chargement du background (et obstacles), de la boîte de dialogue et de la police d'écriture des dialogues
         try {
-            // background = ImageIO.read(new File("assets/maps/mapPaint.png"));
             dialogBox = ImageIO.read(new File("assets/sprites/divers/dialog_box.png"));
             arbreImg = ImageIO.read(new File("assets/sprites/obstacles/arbre.png"));
             rockImg = ImageIO.read(new File("assets/sprites/obstacles/rocher.png"));
@@ -67,17 +60,35 @@ public class GamePanel extends JPanel implements Runnable, KeyListener {
             Font pixelifyFont = Font.createFont(Font.TRUETYPE_FONT, fontFile);
             dialogFont = pixelifyFont.deriveFont(Font.PLAIN, 22);
 
-        } catch (Exception e) {
+        } 
+        catch (Exception e) {
             e.printStackTrace();
             if (e instanceof FontFormatException){
                 dialogFont = new Font("Arial", Font.PLAIN, 22);
             }
         }     
         
-        //Ajour des obstacles dans notre ArrayList
-        obstacles.add(new Arbre(32, 32, 56, 48, 22, 11, 22, arbreImg));
-        obstacles.add(new Obstacle(100, 100, 32, 10, rockImg));
+        //Création de tous les obstacles
+        Arbre arbre = new Arbre(32, 32, 56, 48, 22, 11, 22, arbreImg);
+        Obstacle rocher = new Obstacle(100, 100, 32, 10, rockImg);
 
+        //Création des NPCs.
+        npc = new NPC(100, 100, 32, 32, new ArrayList<String>(List.of("Bonjour", "Caca", "ABABABA")), 100 ,100, 300, 100, 300, 300, 100, 300 );
+
+        //Création de toutes les maps.
+        Map map1 = new Map("test", 1600, 1200, "assets/maps/mapPaint.png",
+            new ArrayList<NPC>(List.of(npc)),
+            new ArrayList<Obstacle>(List.of(arbre, rocher))
+        );
+
+
+        Map map2 = new Map("map2", 1600, 1200, "assets/maps/mapDesertTest.png",
+            new ArrayList<NPC>(),
+            new ArrayList<Obstacle>()
+        );
+
+        //On met la map 1 comme map actuelle.
+        actualMap = map1;
 
     }
 
@@ -109,7 +120,7 @@ public class GamePanel extends JPanel implements Runnable, KeyListener {
                 Rectangle playerBounds = new Rectangle(player.getX(), player.getY(), 16, 16);
 
                 //Si le rectangle du joueur entre en collision avec celui d'un obstacle, on change la valeur de hasCollised.
-                for (Obstacle obs : obstacles){
+                for (Obstacle obs : actualMap.getObstacles()){
                     if (playerBounds.intersects(obs.getBounds())){
                         hasCollided = true;
                         break;
@@ -122,15 +133,18 @@ public class GamePanel extends JPanel implements Runnable, KeyListener {
                     player.setPosition(lastX, lastY);
                 }
 
-                //Vérifie la collision avec un NPC
-                if (player.collidesWithNPC(npc)) {
-                    //Si collision, rollback
-                    player.setPosition(lastX, lastY);
+                for (NPC n : actualMap.getNPCs()){
+                    //Vérifie la collision avec un NPC
+                    if (player.collidesWithNPC(n)) {
+                        //Si collision, rollback
+                        player.setPosition(lastX, lastY);
+                    }
+                    //Si pas collision, le npc bouge.
+                    else{
+                        n.npcMove();
+                    } 
                 }
-                //Si pas collision, le npc bouge.
-                else{
-                    npc.npcMove();
-                }
+                
 
                 repaint();
                 delta--;
@@ -166,9 +180,9 @@ public class GamePanel extends JPanel implements Runnable, KeyListener {
         g2.scale(zoom, zoom);
 
         //Dessin de la map et du monde
-        mapTest.draw(g2);
+        actualMap.draw(g2);
 
-        for (Obstacle obs : obstacles) {
+        for (Obstacle obs : actualMap.getObstacles()) {
             if (obs instanceof Arbre) {
                 ((Arbre) obs).drawTrunk(g2);
             } else {
@@ -176,62 +190,71 @@ public class GamePanel extends JPanel implements Runnable, KeyListener {
             }
         }
         player.draw(g2);
-        npc.draw(g2);
 
-        for (Obstacle obs : obstacles) {
+        for (NPC n : actualMap.getNPCs()){
+            n.draw(g2);
+        }
+        
+
+        for (Obstacle obs : actualMap.getObstacles()) {
             if (obs instanceof Arbre) {
                 ((Arbre) obs).drawFoliage(g2);
             }
         }
 
-        //Si le joueur est à proximité du NPC, on affiche une message comme quoi il peut lui parler.
-        if (npc.isNear(player)){
-            g2.setColor(Color.WHITE);
-            g2.setFont(new Font("Arial", Font.PLAIN, 10));
-            g2.drawString("Appuyez sur [E] pour parler", npc.getX()-45, npc.getY()-10);
+        for (NPC n : actualMap.getNPCs()){
+            //Si le joueur est à proximité du NPC, on affiche une message comme quoi il peut lui parler.
+            if (n.isNear(player)){
+                g2.setColor(Color.WHITE);
+                g2.setFont(new Font("Arial", Font.PLAIN, 10));
+                g2.drawString("Appuyez sur [E] pour parler", n.getX()-45, n.getY()-10);
+            }
         }
+
+        
 
 
 
         //Retour en "coordonnées écran"
         g2.setTransform(originalTransform);
 
-        //Affichage de la boîte de dialogue à l’écran, en bas au centre
-        if (npc.isNear(player)) {
-            if (player.isTalking() && !npc.hasTalk()) {
+        for (NPC n : actualMap.getNPCs()){
+            if (n.isNear(player)) {
+                if (player.isTalking() && !n.hasTalk()) {
 
-                int width = (int)(dialogBox.getWidth() * zoom);
-                int height = (int)(dialogBox.getHeight() * zoom);
+                    int width = (int)(dialogBox.getWidth() * zoom);
+                    int height = (int)(dialogBox.getHeight() * zoom);
 
-                int dialogX = (getWidth() - width) / 2;
-                int dialogY = getHeight() - height - 20;
+                    int dialogX = (getWidth() - width) / 2;
+                    int dialogY = getHeight() - height - 20;
 
-                //Affiche la boîte de dialogue centrée en bas
-                g2.drawImage(dialogBox, dialogX, dialogY, width, height, null);
+                    //Affiche la boîte de dialogue centrée en bas
+                    g2.drawImage(dialogBox, dialogX, dialogY, width, height, null);
 
-                //Récupère les dialogues à afficher
-                ArrayList<String> lines = new ArrayList<>();
-                lines.add(npc.allDialogs().get(currentDialogIndex));
+                    //Récupère les dialogues à afficher
+                    ArrayList<String> lines = new ArrayList<>();
+                    lines.add(n.allDialogs().get(currentDialogIndex));
 
-                g2.setColor(Color.BLACK);
-                g2.setFont(dialogFont);
-                FontMetrics fm = g2.getFontMetrics();
+                    g2.setColor(Color.BLACK);
+                    g2.setFont(dialogFont);
+                    FontMetrics fm = g2.getFontMetrics();
 
-                int lineHeight = fm.getHeight();
+                    int lineHeight = fm.getHeight();
 
-                //Calcule la hauteur totale du texte
-                int totalTextHeight = lines.size() * lineHeight;
+                    //Calcule la hauteur totale du texte
+                    int totalTextHeight = lines.size() * lineHeight;
 
-                //Texte verticalement centré dans la boîte
-                int lineY = dialogY + (height - totalTextHeight) / 2 + fm.getAscent();
+                    //Texte verticalement centré dans la boîte
+                    int lineY = dialogY + (height - totalTextHeight) / 2 + fm.getAscent();
 
-                for (String line : lines) {
-                    g2.drawString(line, dialogX + 50, lineY);
-                    lineY += lineHeight;
+                    for (String line : lines) {
+                        g2.drawString(line, dialogX + 50, lineY);
+                        lineY += lineHeight;
+                    }
                 }
             }
-
         }
+        
     }
 
 
@@ -239,20 +262,23 @@ public class GamePanel extends JPanel implements Runnable, KeyListener {
 
     @Override
     public void keyPressed(KeyEvent e) {
-        if (e.getKeyCode() == KeyEvent.VK_E && npc.isNear(player)) {
-            if (!player.isTalking()) {
-                player.changeTalk();
-                currentDialogIndex = 0; //Démarrer au début du dialogue
-            } else {
-                currentDialogIndex++;
-                if (currentDialogIndex >= npc.allDialogs().size()) {
-                    //Fin du dialogue
+        for(NPC n : actualMap.getNPCs()){
+            if (e.getKeyCode() == KeyEvent.VK_E && n.isNear(player)) {
+                if (!player.isTalking()) {
                     player.changeTalk();
-                    npc.resetTalk();
-                    currentDialogIndex = 0;
+                    currentDialogIndex = 0; //Démarrer au début du dialogue
+                } else {
+                    currentDialogIndex++;
+                    if (currentDialogIndex >= n.allDialogs().size()) {
+                        //Fin du dialogue
+                        player.changeTalk();
+                        n.resetTalk();
+                        currentDialogIndex = 0;
+                    }
                 }
             }
         }
+        
 
         player.keyPressed(e);
     }

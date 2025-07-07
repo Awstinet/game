@@ -15,12 +15,16 @@ public class Map {
     public int width, height;
     public String name;
     private BufferedImage image;
+    private ArrayList<NPC> lstNPCs;
+    private ArrayList<Obstacle> lstObstacles;
 
-    public Map(String name, int width, int height, String pathImage){
+    public Map(String name, int width, int height, String pathImage, ArrayList<NPC> lstNPCs, ArrayList<Obstacle> lstObstacles){
         this.name = name;
         this.width = width;
         this.height = height;
         this.pathImage = pathImage;
+        this.lstNPCs = lstNPCs;
+        this.lstObstacles = lstObstacles;
 
         try {
             image = ImageIO.read(new File(pathImage));
@@ -37,10 +41,14 @@ public class Map {
         return new ArrayList<Integer>(List.of(width, height));
     }
 
-    public String getName(){return name;}
+    public String getMapName(){return name;}
 
     public BufferedImage getImage() throws IOException{
         return ImageIO.read(new File(pathImage));
     }
+
+    public ArrayList<NPC> getNPCs(){return lstNPCs;}
+    
+    public ArrayList<Obstacle> getObstacles(){return lstObstacles;}
     
 }
