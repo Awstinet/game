@@ -36,7 +36,6 @@ public class NPC {
     public void draw(Graphics g) {
         g.setColor(this.color);
         g.fillRect(x, y, width, height);
-
     }
 
     public int getX() {return x;}

@@ -29,6 +29,8 @@ public class GamePanel extends JPanel implements Runnable, KeyListener {
 
     private Map actualMap;
 
+    public ArrayList<Portal> lstPortals = new ArrayList<Portal>();
+
 
     public GamePanel() {
         this.setPreferredSize(new Dimension(800, 600));
@@ -74,6 +76,7 @@ public class GamePanel extends JPanel implements Runnable, KeyListener {
 
         //Création des NPCs.
         npc = new NPC(100, 100, 32, 32, new ArrayList<String>(List.of("Bonjour", "Caca", "ABABABA")), 100 ,100, 300, 100, 300, 300, 100, 300 );
+       
 
         //Création de toutes les maps.
         Map map1 = new Map("test", 1600, 1200, "assets/maps/mapPaint.png",
@@ -81,11 +84,15 @@ public class GamePanel extends JPanel implements Runnable, KeyListener {
             new ArrayList<Obstacle>(List.of(arbre, rocher))
         );
 
-
         Map map2 = new Map("map2", 1600, 1200, "assets/maps/mapDesertTest.png",
             new ArrayList<NPC>(),
             new ArrayList<Obstacle>()
         );
+
+
+        //Création des portails
+        lstPortals.add(new Portal(map1, map2, 150, 150));
+        lstPortals.add(new Portal(map2, map1, 170, 170));
 
         //On met la map 1 comme map actuelle.
         actualMap = map1;
@@ -118,6 +125,15 @@ public class GamePanel extends JPanel implements Runnable, KeyListener {
 
                 boolean hasCollided = false;
                 Rectangle playerBounds = new Rectangle(player.getX(), player.getY(), 16, 16);
+
+                //Si le joueur passer sur un portail du monde dans lequel il est, la map actuelle change.
+                for (Portal portal : lstPortals){
+                    if (portal.actualMap.equals(actualMap)){
+                        if (portal.stepOnPortal(player)){
+                        actualMap = portal.targetMap;
+                        }
+                    }    
+                }
 
                 //Si le rectangle du joueur entre en collision avec celui d'un obstacle, on change la valeur de hasCollised.
                 for (Obstacle obs : actualMap.getObstacles()){
@@ -181,6 +197,12 @@ public class GamePanel extends JPanel implements Runnable, KeyListener {
 
         //Dessin de la map et du monde
         actualMap.draw(g2);
+
+        for (Portal portal : lstPortals){
+            if (portal.actualMap.equals(actualMap)){
+                portal.draw(g2);
+            }
+        }
 
         for (Obstacle obs : actualMap.getObstacles()) {
             if (obs instanceof Arbre) {
