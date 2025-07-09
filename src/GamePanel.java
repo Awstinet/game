@@ -227,9 +227,11 @@ public class GamePanel extends JPanel implements Runnable, KeyListener {
         for (NPC n : actualMap.getNPCs()){
             //Si le joueur est à proximité du NPC, on affiche une message comme quoi il peut lui parler.
             if (n.isNear(player)){
-                g2.setColor(Color.WHITE);
-                g2.setFont(new Font("Arial", Font.PLAIN, 10));
-                g2.drawString("Appuyez sur [E] pour parler", n.getX()-45, n.getY()-10);
+                if (n.allDialogs().size() > 0){
+                    g2.setColor(Color.WHITE);
+                    g2.setFont(new Font("Arial", Font.PLAIN, 10));
+                    g2.drawString("Appuyez sur [E] pour parler", n.getX()-45, n.getY()-10);
+                }
             }
         }
 
@@ -285,7 +287,7 @@ public class GamePanel extends JPanel implements Runnable, KeyListener {
     @Override
     public void keyPressed(KeyEvent e) {
         for(NPC n : actualMap.getNPCs()){
-            if (e.getKeyCode() == KeyEvent.VK_E && n.isNear(player)) {
+            if (e.getKeyCode() == KeyEvent.VK_E && n.isNear(player) && n.allDialogs().size() > 0) {
                 if (!player.isTalking()) {
                     player.changeTalk();
                     currentDialogIndex = 0; //Démarrer au début du dialogue
