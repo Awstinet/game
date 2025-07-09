@@ -1,6 +1,6 @@
 - Changement de carte : Fait le 08/07/25
 
-- Mettre un sprite au NPC et adapter le code pour qu'il ressemble à celui des obstacles.
+- Mettre un sprite au NPC et adapter le code pour qu'il ressemble à celui des obstacles. : Fait le 09/07/25
 
 - Ennemi :
     - Pouvoir dialoguer avec lui
