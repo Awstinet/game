@@ -1,7 +1,11 @@
 package src;
 
 import java.awt.*;
+import java.awt.image.BufferedImage;
+import java.io.IOException;
 import java.util.ArrayList;
+import java.io.File;
+import javax.imageio.ImageIO;
 
 public class NPC {
     private int x, y;
@@ -9,16 +13,16 @@ public class NPC {
     private ArrayList<ArrayList<Integer>> cosMove = new ArrayList<ArrayList<Integer>>();
     private int currentPoint = 0;
     private int nbPoint;
-    private Color color;
     private ArrayList<String> dialogs = new ArrayList<String>();
     private boolean hasTalk;
+    public String pathImage;
+    private BufferedImage image;
 
-    public NPC(int x, int y, int width, int height, ArrayList<String> dialogs, int... cos) {
+    public NPC(int x, int y, int width, int height, ArrayList<String> dialogs, String pathImage, int... cos) {
         this.x = x;
         this.y = y;
         this.width = width;
         this.height = height;
-        this.color = new Color(255,0,0);
         this.dialogs = dialogs;
         this.hasTalk = false;
 
@@ -31,11 +35,17 @@ public class NPC {
         }
 
         this.nbPoint = this.cosMove.size(); //Nombre de coordonnées différentes
+
+        try {
+            image = ImageIO.read(new File(pathImage));
+        }
+        catch (IOException e){
+            e.printStackTrace();
+        }
     }
 
     public void draw(Graphics g) {
-        g.setColor(this.color);
-        g.fillRect(x, y, width, height);
+        g.drawImage(image, x, y, null);
     }
 
     public int getX() {return x;}
@@ -57,26 +67,20 @@ public class NPC {
 
         int speed = 1;
 
-        //A enlever dans le futur : Changement de couleur, mais faut lui ajouter son sprite avant ça.
-
         //Déplacement sur l'axe X
         if (x < targetX) {
-            color = new Color(0,255,0);
             x += speed;
             if (x > targetX) x = targetX;
         } else if (x > targetX) {
             x -= speed;
-            color = new Color(0,0,255);
             if (x < targetX) x = targetX;
         }
 
         //Déplacement sur l'axe Y
         if (y < targetY) {
             y += speed;
-            color = new Color(125,125,200);
             if (y > targetY) y = targetY;
         } else if (y > targetY) {
-            color = new Color(125,200,200);
             y -= speed;
             if (y < targetY) y = targetY;
         }

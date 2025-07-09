@@ -75,7 +75,7 @@ public class GamePanel extends JPanel implements Runnable, KeyListener {
         Obstacle rocher = new Obstacle(100, 100, 32, 10, rockImg);
 
         //Création des NPCs.
-        npc = new NPC(100, 100, 32, 32, new ArrayList<String>(List.of("Bonjour", "Caca", "ABABABA")), 100 ,100, 300, 100, 300, 300, 100, 300 );
+        npc = new NPC(100, 100, 16, 16, new ArrayList<String>(List.of("Bonjour", "Caca", "ABABABA")), "assets/sprites/personnages/amogus.png",100, 100, 300, 100, 300, 300, 100, 300 );
        
 
         //Création de toutes les maps.
