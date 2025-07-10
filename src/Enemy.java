@@ -8,6 +8,8 @@ public class Enemy extends NPC{
     public int attack, hp, range;
     public int sensibility; //Nombre de pixels duquel le joueur doit se tenir avant d'être repéré.
 
+    private long lastAttackTime = 0;
+
     public Enemy(int x, int y, int width, int height, ArrayList<String> dialogs, String pathImage, int attack, int hp, int range, int sensibility, int... cos){
         super(x, y, width, height, dialogs, pathImage, cos);
         this.attack = attack;
@@ -24,6 +26,12 @@ public class Enemy extends NPC{
         Rectangle playerBounds = new Rectangle(p.getX(), p.getY(), 16, 16);
         Rectangle enemySensibility = new Rectangle(x - sensibility, y - sensibility , width + 2 * sensibility, height + 2 * sensibility);
         return playerBounds.intersects(enemySensibility);        
+    }
+
+    public boolean isPlayerInHisRange(Player p){
+        Rectangle playerBounds = new Rectangle(p.getX(), p.getY(), 16, 16);
+        Rectangle enemyRange = new Rectangle(x - range, y - range , width + 2 * range, height + 2 * range);
+        return playerBounds.intersects(enemyRange);
     }
 
     public void moveToPlayer(Player p){
@@ -49,6 +57,16 @@ public class Enemy extends NPC{
             if (y < py) y = py;
         }
 
+    }
+
+    public void attackPlayer (Player p){
+        long currentTime = System.currentTimeMillis();
+
+        if (currentTime - lastAttackTime >= 2000) {
+            lastAttackTime = currentTime;
+            p.changeHP(attack);
+            System.out.println(p.hp);
+        }
     }
 
 }

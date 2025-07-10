@@ -3,9 +3,12 @@
 - Mettre un sprite au NPC et adapter le code pour qu'il ressemble à celui des obstacles. : Fait le 09/07/25
 
 - Ennemi :
-    - Pouvoir dialoguer avec lui
+    - Pouvoir dialoguer avec lui (Inclure dans une cinématique le dialogue avec l'ennemi)
     - Se battre avec
-    - Détection ou non selon si on est caché par un obstacle
+    - Détection ou non selon si on est caché par un obstacle (Seulement pour certains. On créera une classe spéciale en temps voulu.)
+    ├──> Se déplace aléatoirement dans la zone le temps de nous chercher. Pas de patterne précis.
+    └──> Si obstacle au dessus (rpctmt en dessous) et qu'on est plus haut (rpctmt plus bas) (idem pour gauche et droite) : Ne nous détecte pas
+
 
 - Attaques (de près & de loin)
 
@@ -23,5 +26,7 @@
 - Mettre de la musique au jeu
 
 - Cinématiques
+
+- Quand game over, ajouter quelque chose avant de respawn.
 
 - Sauvegardes avec liaison BDD ou Json (en local)

@@ -31,6 +31,11 @@ public class GamePanel extends JPanel implements Runnable, KeyListener {
 
     public ArrayList<Portal> lstPortals = new ArrayList<Portal>();
 
+    public boolean playerIsDead = false;
+    private BufferedImage gameOverScreen;
+    private long gameOverStartTime = 0;
+    private boolean showGameOverScreen = false;
+
 
     public GamePanel() {
         this.setPreferredSize(new Dimension(800, 600));
@@ -56,6 +61,7 @@ public class GamePanel extends JPanel implements Runnable, KeyListener {
             dialogBox = ImageIO.read(new File("assets/sprites/divers/dialog_box.png"));
             arbreImg = ImageIO.read(new File("assets/sprites/obstacles/arbre.png"));
             rockImg = ImageIO.read(new File("assets/sprites/obstacles/rocher.png"));
+            gameOverScreen = ImageIO.read(new File("assets/sprites/divers/gameOverScreen.png"));
 
 
             File fontFile = new File("assets/fonts/pixelify/PixelifySans-SemiBold.ttf");
@@ -77,7 +83,7 @@ public class GamePanel extends JPanel implements Runnable, KeyListener {
         //Création des NPCs.
         npc = new NPC(100, 100, 16, 16, new ArrayList<String>(List.of("Bonjour", "Caca", "ABABABA")), "assets/sprites/personnages/amogus.png",100, 100, 300, 100, 300, 300, 100, 300);
         Enemy squelette = new Enemy(100, 100, 11, 19, new ArrayList<>(), "assets/sprites/personnages/squelette.png", 
-        5, 50, 0, 40, 100, 100, 300, 100, 300, 300, 100, 300);
+        25, 50, 1, 40, 100, 100, 300, 100, 300, 300, 100, 300);
 
         //Création de toutes les maps.
         Map map1 = new Map("test", 1600, 1200, "assets/maps/mapPaint.png",
@@ -117,6 +123,24 @@ public class GamePanel extends JPanel implements Runnable, KeyListener {
             lastTime = currentTime;
 
             if (delta >= 1) {
+                // Si l'écran de Game Over est actif
+                if (showGameOverScreen) {
+                    long elapsed = System.currentTimeMillis() - gameOverStartTime;
+                    System.out.println(elapsed);
+                    if (elapsed >= 10000) { // 10 secondes
+                        restartGame();
+                    }
+                    repaint();
+                    delta--;
+                    continue; // On saute le reste du jeu
+                }
+
+                if (player.hp <= 0 && !showGameOverScreen) {
+                    playerIsDead = true;
+                    showGameOverScreen = true;
+                    gameOverStartTime = System.currentTimeMillis();
+                }
+
                 //Sauvegarde la position AVANT le déplacement
                 int lastX = player.getX();
                 int lastY = player.getY();
@@ -159,7 +183,14 @@ public class GamePanel extends JPanel implements Runnable, KeyListener {
                     //Si c'est un ennemi et que le joueur est dans sa zone de sensibilité
                     else if (n instanceof Enemy){
                         Enemy e = (Enemy) n;
-                        if (e.isPlayerNear(player)){
+
+                        //Si le joueur se trouve dans la zone d'attaque de l'ennemi
+                        if (e.isPlayerInHisRange(player)){
+                            e.attackPlayer(player);
+                        }
+
+                        //Si le joueur est dans la zone de sensibilité de l'ennemi
+                        else if (e.isPlayerNear(player)){
                             e.moveToPlayer(player);
                         }
                         else{
@@ -193,6 +224,11 @@ public class GamePanel extends JPanel implements Runnable, KeyListener {
         g2.setColor(Color.BLACK);
         g2.fillRect(0, 0, getWidth(), getHeight());
 
+        if (playerIsDead) {
+            playerIsDead = false;
+            //Dessiner écran de game over
+        }
+
         //Sauvegarde la transform de base (écran)
         AffineTransform originalTransform = g2.getTransform();
 
@@ -215,6 +251,7 @@ public class GamePanel extends JPanel implements Runnable, KeyListener {
             }
         }
 
+        //Dessine tous les obstacles de la map actuelle
         for (Obstacle obs : actualMap.getObstacles()) {
             if (obs instanceof Arbre) {
                 ((Arbre) obs).drawTrunk(g2);
@@ -222,13 +259,15 @@ public class GamePanel extends JPanel implements Runnable, KeyListener {
                 obs.draw(g2);
             }
         }
+
+        //Dessine le joueur
         player.draw(g2);
 
         for (NPC n : actualMap.getNPCs()){
             n.draw(g2);
         }
         
-
+        //Pour les arbres, dessine le feuillage
         for (Obstacle obs : actualMap.getObstacles()) {
             if (obs instanceof Arbre) {
                 ((Arbre) obs).drawFoliage(g2);
@@ -289,7 +328,10 @@ public class GamePanel extends JPanel implements Runnable, KeyListener {
                 }
             }
         }
-        
+
+        if (showGameOverScreen && gameOverScreen != null) {
+            g.drawImage(gameOverScreen, 0, 0, getWidth(), getHeight(), null);
+        }    
     }
 
 
@@ -325,4 +367,18 @@ public class GamePanel extends JPanel implements Runnable, KeyListener {
 
     @Override
     public void keyTyped(KeyEvent e) {}
+
+
+    private void restartGame() {
+        player.x = 0;
+        player.y = 0;
+        player.hp = 100;
+        player.reset();
+
+        actualMap = lstPortals.get(0).actualMap; //Remet la map de départ
+        showGameOverScreen = false;
+        playerIsDead = false;
+    }
+
+
 }

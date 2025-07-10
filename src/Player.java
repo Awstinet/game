@@ -10,7 +10,7 @@ import java.util.ArrayList;
 import javax.imageio.ImageIO;
 
 public class Player {
-    private int x, y;
+    public int x, y;
     private int speed = 2;
     private boolean left, right, up, down;
     private boolean talk = false;
@@ -100,6 +100,14 @@ public class Player {
 
     public void changeTalk(){
         talk = (talk == true) ? talk = false : true;
+    }
+
+    public void changeHP(int attack){
+        hp -= attack;
+    }
+
+    public void reset() {
+        if (talk) changeTalk(); //Arrêter de parler
     }
     
 }
