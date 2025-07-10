@@ -75,8 +75,9 @@ public class GamePanel extends JPanel implements Runnable, KeyListener {
         Obstacle rocher = new Obstacle(100, 100, 32, 10, rockImg);
 
         //Création des NPCs.
-        npc = new NPC(100, 100, 16, 16, new ArrayList<String>(List.of("Bonjour", "Caca", "ABABABA")), "assets/sprites/personnages/amogus.png",100, 100, 300, 100, 300, 300, 100, 300 );
-       
+        npc = new NPC(100, 100, 16, 16, new ArrayList<String>(List.of("Bonjour", "Caca", "ABABABA")), "assets/sprites/personnages/amogus.png",100, 100, 300, 100, 300, 300, 100, 300);
+        Enemy squelette = new Enemy(100, 100, 11, 19, new ArrayList<>(), "assets/sprites/personnages/squelette.png", 
+        5, 50, 0, 40, 100, 100, 300, 100, 300, 300, 100, 300);
 
         //Création de toutes les maps.
         Map map1 = new Map("test", 1600, 1200, "assets/maps/mapPaint.png",
@@ -85,7 +86,7 @@ public class GamePanel extends JPanel implements Runnable, KeyListener {
         );
 
         Map map2 = new Map("map2", 1600, 1200, "assets/maps/mapDesertTest.png",
-            new ArrayList<NPC>(),
+            new ArrayList<NPC>(List.of(squelette)),
             new ArrayList<Obstacle>()
         );
 
@@ -155,10 +156,20 @@ public class GamePanel extends JPanel implements Runnable, KeyListener {
                         //Si collision, rollback
                         player.setPosition(lastX, lastY);
                     }
+                    //Si c'est un ennemi et que le joueur est dans sa zone de sensibilité
+                    else if (n instanceof Enemy){
+                        Enemy e = (Enemy) n;
+                        if (e.isPlayerNear(player)){
+                            e.moveToPlayer(player);
+                        }
+                        else{
+                            e.npcMove();
+                        }
+                    } 
                     //Si pas collision, le npc bouge.
                     else{
                         n.npcMove();
-                    } 
+                    }
                 }
                 
 

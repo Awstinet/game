@@ -8,8 +8,8 @@ import java.io.File;
 import javax.imageio.ImageIO;
 
 public class NPC {
-    private int x, y;
-    private int width, height;
+    public int x, y;
+    public int width, height;
     private ArrayList<ArrayList<Integer>> cosMove = new ArrayList<ArrayList<Integer>>();
     private int currentPoint = 0;
     private int nbPoint;
