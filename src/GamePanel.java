@@ -35,6 +35,9 @@ public class GamePanel extends JPanel implements Runnable, KeyListener {
     private BufferedImage gameOverScreen;
     private long gameOverStartTime = 0;
     private boolean showGameOverScreen = false;
+    private boolean readyToRestart = false;
+    private int restartMessageAlpha = 0; //Pour le fondu.
+
 
 
     public GamePanel() {
@@ -123,18 +126,26 @@ public class GamePanel extends JPanel implements Runnable, KeyListener {
             lastTime = currentTime;
 
             if (delta >= 1) {
-                // Si l'écran de Game Over est actif
+                //Si l'écran de Game Over est actif
                 if (showGameOverScreen) {
                     long elapsed = System.currentTimeMillis() - gameOverStartTime;
-                    System.out.println(elapsed);
-                    if (elapsed >= 10000) { // 10 secondes
-                        restartGame();
+
+                    if (elapsed >= 5000) { //Si ça fait 5 secondes qu'on est sur l'écran de game over, on a le droit de restart
+                        readyToRestart = true;
                     }
+
+                    //Fait un fade-in progressif du texte sur 2 secondes (2000 ms)
+                    if (elapsed >= 5000 && restartMessageAlpha < 255) {
+                        restartMessageAlpha += 5;
+                        if (restartMessageAlpha > 255) restartMessageAlpha = 255;
+                    }
+
                     repaint();
                     delta--;
-                    continue; // On saute le reste du jeu
+                    continue;
                 }
 
+                //Si le joueur n'a plus de PVs, on affichera l'écran de game over à la prochaine itération.
                 if (player.hp <= 0 && !showGameOverScreen) {
                     playerIsDead = true;
                     showGameOverScreen = true;
@@ -223,11 +234,6 @@ public class GamePanel extends JPanel implements Runnable, KeyListener {
         //Fond noir
         g2.setColor(Color.BLACK);
         g2.fillRect(0, 0, getWidth(), getHeight());
-
-        if (playerIsDead) {
-            playerIsDead = false;
-            //Dessiner écran de game over
-        }
 
         //Sauvegarde la transform de base (écran)
         AffineTransform originalTransform = g2.getTransform();
@@ -331,7 +337,25 @@ public class GamePanel extends JPanel implements Runnable, KeyListener {
 
         if (showGameOverScreen && gameOverScreen != null) {
             g.drawImage(gameOverScreen, 0, 0, getWidth(), getHeight(), null);
-        }    
+
+            //Afficher le texte pour recommencer avec un fondu.
+            if (readyToRestart) {
+                Graphics2D g2d = (Graphics2D) g.create();
+                g2d.setFont(new Font("Arial", Font.BOLD, 24));
+                String restartText = "Appuyez sur [E] pour recommencer";
+                FontMetrics fm = g2d.getFontMetrics();
+                int textWidth = fm.stringWidth(restartText);
+                int x = (getWidth() - textWidth) / 2;
+                int y = getHeight() - 50;
+
+                // Applique la transparence
+                g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, restartMessageAlpha / 255f));
+                g2d.setColor(Color.BLACK);
+                g2d.drawString(restartText, x, y);
+
+                g2d.dispose();
+            }
+        }  
     }
 
 
@@ -339,6 +363,12 @@ public class GamePanel extends JPanel implements Runnable, KeyListener {
 
     @Override
     public void keyPressed(KeyEvent e) {
+
+        if (showGameOverScreen && readyToRestart && e.getKeyCode() == KeyEvent.VK_E) {
+            restartGame();
+            return;
+        }
+
         for(NPC n : actualMap.getNPCs()){
             if (e.getKeyCode() == KeyEvent.VK_E && n.isNear(player) && n.allDialogs().size() > 0) {
                 if (!player.isTalking()) {
@@ -375,9 +405,12 @@ public class GamePanel extends JPanel implements Runnable, KeyListener {
         player.hp = 100;
         player.reset();
 
-        actualMap = lstPortals.get(0).actualMap; //Remet la map de départ
+        actualMap = lstPortals.get(0).actualMap;
+
         showGameOverScreen = false;
         playerIsDead = false;
+        readyToRestart = false;
+        restartMessageAlpha = 0;
     }
 
 
