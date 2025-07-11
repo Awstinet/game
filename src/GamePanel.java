@@ -86,7 +86,7 @@ public class GamePanel extends JPanel implements Runnable, KeyListener {
         //Création des NPCs.
         npc = new NPC(100, 100, 16, 16, new ArrayList<String>(List.of("Bonjour", "Caca", "ABABABA")), "assets/sprites/personnages/amogus.png",100, 100, 300, 100, 300, 300, 100, 300);
         Enemy squelette = new Enemy(100, 100, 11, 19, new ArrayList<>(), "assets/sprites/personnages/squelette.png", 
-        25, 50, 1, 40, 100, 100, 300, 100, 300, 300, 100, 300);
+        25, 50, 1, 80, 100, 100, 300, 100, 300, 300, 100, 300);
 
         //Création de toutes les maps.
         Map map1 = new Map("test", 1600, 1200, "assets/maps/mapPaint.png",
