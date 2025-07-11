@@ -65,7 +65,7 @@ public class Enemy extends NPC{
         if (currentTime - lastAttackTime >= 2000) {
             lastAttackTime = currentTime;
             p.changeHP(attack);
-            System.out.println(p.hp);
+            System.out.println("PV du joueur : " + p.hp);
         }
     }
 
