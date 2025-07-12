@@ -7,6 +7,7 @@ public class Enemy extends NPC{
     
     public int attack, hp, range;
     public int sensibility; //Nombre de pixels duquel le joueur doit se tenir avant d'être repéré.
+    public boolean isDead = false;
 
     private long lastAttackTime = 0;
 
@@ -64,9 +65,13 @@ public class Enemy extends NPC{
 
         if (currentTime - lastAttackTime >= 2000) {
             lastAttackTime = currentTime;
-            p.changeHP(attack);
+            // p.changeHP(attack);
             System.out.println("PV du joueur : " + p.hp);
         }
+    }
+
+    public void changeHP(int n){
+        hp -= n;
     }
 
 }

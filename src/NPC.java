@@ -114,7 +114,5 @@ public class NPC {
         return distanceSquared <= proximityThreshold * proximityThreshold;
     }
 
-
-
 }
 

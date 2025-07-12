@@ -10,7 +10,9 @@
     └──> Si obstacle au dessus (rpctmt en dessous) et qu'on est plus haut (rpctmt plus bas) (idem pour gauche et droite) : Ne nous détecte pas
 
 
-- Attaques (de près & de loin)
+- Attaques (de près & de loin) : Fait le 12/07/25
+
+- Quand j'ouvre un dialogue avec un NPC sans le finir, puis que je vais voir un autre PNJ ça bug.
 
 - Ajouter barres de vie.
 

@@ -16,6 +16,7 @@ public class Player {
     private boolean talk = false;
     public int hp = 100;
     public int attack = 10;
+    public long lastAttackTime = 0;
 
     private BufferedImage spriteSheet;
     private BufferedImage[] sprites;
@@ -81,6 +82,12 @@ public class Player {
 
 
     public boolean collidesWithNPC(NPC npc) {
+
+        if (npc instanceof Enemy) {
+            Enemy e = (Enemy) npc;
+            if (e.isDead){return false;} //Si c'est un ennemi mort, alors il n'y aura jamais de collision avec lui.
+        }
+
         Rectangle playerRect = new Rectangle(x, y, 16, 16);
 
         Rectangle npcRect = new Rectangle(npc.getX(), npc.getY(), npc.getWidth(), npc.getHeight());
@@ -108,6 +115,21 @@ public class Player {
 
     public void reset() {
         if (talk) changeTalk(); //Arrêter de parler
+    }
+
+    public void attackEnemy(Enemy e){
+        long currentTimeMillis = System.currentTimeMillis();
+
+        if (currentTimeMillis - lastAttackTime >= 500) {
+            lastAttackTime = currentTimeMillis;
+            e.changeHP(attack);
+        }
+    }
+
+    public boolean isEnemyInHisRange(Enemy e, int range){
+        Rectangle playerBounds = new Rectangle(getX(), getY(), 16, 16);
+        Rectangle enemyBounds = new Rectangle(e.x - range, e.y - range , e.width + 2 * range, e.height + 2 * range);
+        return playerBounds.intersects(enemyBounds);
     }
     
 }

@@ -11,7 +11,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.awt.geom.AffineTransform;
 
-public class GamePanel extends JPanel implements Runnable, KeyListener {
+public class GamePanel extends JPanel implements Runnable, KeyListener, MouseListener {
 
     private Thread gameThread;
     private final int FPS = 60;
@@ -44,6 +44,7 @@ public class GamePanel extends JPanel implements Runnable, KeyListener {
         this.setPreferredSize(new Dimension(800, 600));
         this.setFocusable(true);
         this.addKeyListener(this);
+        this.addMouseListener(this);
 
         //Chargement du sprite du joueur.
         try {
@@ -152,6 +153,12 @@ public class GamePanel extends JPanel implements Runnable, KeyListener {
                     gameOverStartTime = System.currentTimeMillis();
                 }
 
+                for (NPC npc : actualMap.getNPCs()){
+                    if (npc instanceof Enemy){
+
+                    }
+                }
+
                 //Sauvegarde la position AVANT le déplacement
                 int lastX = player.getX();
                 int lastY = player.getY();
@@ -194,6 +201,8 @@ public class GamePanel extends JPanel implements Runnable, KeyListener {
                     //Si c'est un ennemi et que le joueur est dans sa zone de sensibilité
                     else if (n instanceof Enemy){
                         Enemy e = (Enemy) n;
+                        
+                        if (e.isDead) { continue; }
 
                         //Si le joueur se trouve dans la zone d'attaque de l'ennemi
                         if (e.isPlayerInHisRange(player)){
@@ -270,7 +279,15 @@ public class GamePanel extends JPanel implements Runnable, KeyListener {
         player.draw(g2);
 
         for (NPC n : actualMap.getNPCs()){
-            n.draw(g2);
+            if (n instanceof Enemy){
+                Enemy e = (Enemy) n;
+                if (!e.isDead){
+                    e.draw(g2);
+                }
+            }
+            else{
+                n.draw(g2);
+            }
         }
         
         //Pour les arbres, dessine le feuillage
@@ -358,7 +375,44 @@ public class GamePanel extends JPanel implements Runnable, KeyListener {
         }  
     }
 
+    @Override
+    public void mousePressed(MouseEvent e){}
 
+    @Override
+    public void mouseEntered(MouseEvent e){}
+
+    @Override
+    public void mouseReleased(MouseEvent e) {}
+
+    @Override 
+    public void mouseExited(MouseEvent e) {}
+
+    @Override
+    public void mouseClicked(MouseEvent e) {
+
+        //Pour chacun des NPCs de la carte :
+        for (NPC npc : actualMap.getNPCs()){
+            if (npc instanceof Enemy){ //Si le NPC en question est un ennemi :
+                Enemy enemy = (Enemy) npc;
+                //Si l'ennemi est à 2 pixel du joueur et qu'il presse clique gauche
+                if (player.isEnemyInHisRange(enemy, 2) && e.getButton() == MouseEvent.BUTTON1){
+                    player.attackEnemy(enemy);
+                    System.out.println("PV de l'ennemi : " + enemy.hp);
+                    if (enemy.hp <= 0){
+                        enemy.isDead = true;
+                    }
+                }
+                //Si l'ennemi est à moins de 40 pixels du joueur et qu'il fait clique droit
+                else if (player.isEnemyInHisRange(enemy, 80) && e.getButton() == MouseEvent.BUTTON3){
+                    player.attackEnemy(enemy);
+                    System.out.println("PV de l'ennemi : " + enemy.hp);
+                    if (enemy.hp <= 0){
+                        enemy.isDead = true;
+                    }
+                }
+            }
+        }
+    }
 
 
     @Override
