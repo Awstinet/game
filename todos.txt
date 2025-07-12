@@ -31,6 +31,8 @@
 
 - Cinématiques
 
-- Quand game over, ajouter quelque chose avant de respawn.
+- Quand game over, ajouter quelque chose avant de respawn (une épreuve -> Que pour le jeu final.)
+
+- Paufiner les attaques : Quand plusieurs ennemis peuvent être touchés, une seule victime.
 
 - Sauvegardes avec liaison BDD ou Json (en local)
