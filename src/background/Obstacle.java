@@ -1,4 +1,4 @@
-package src;
+package src.background;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;

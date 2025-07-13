@@ -1,4 +1,4 @@
-package src;
+package src.background;
 
 import java.awt.Graphics;
 import java.awt.image.BufferedImage;
@@ -8,6 +8,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.imageio.ImageIO;
+
+import src.people.NPC;
 
 public class Map {
 

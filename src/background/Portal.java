@@ -1,5 +1,7 @@
-package src;
+package src.background;
 import java.awt.*;
+
+import src.people.Player;
 
 public class Portal {
     

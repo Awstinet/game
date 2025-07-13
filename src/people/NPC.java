@@ -1,4 +1,4 @@
-package src;
+package src.people;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;

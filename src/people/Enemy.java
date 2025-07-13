@@ -1,4 +1,4 @@
-package src;
+package src.people;
 
 import java.util.ArrayList;
 import java.awt.*;
