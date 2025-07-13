@@ -390,7 +390,7 @@ public class GamePanel extends JPanel implements Runnable, KeyListener, MouseLis
         for (NPC npc : actualMap.getNPCs()){
             if (npc instanceof Enemy){ //Si le NPC en question est un ennemi :
                 Enemy enemy = (Enemy) npc;
-                //Si l'ennemi est à 2 pixel du joueur et qu'il presse clique gauche
+                //Si l'ennemi est à 8 pixel du joueur et qu'il presse clique gauche
                 if (player.isEnemyInHisRange(enemy, 16) && e.getButton() == MouseEvent.BUTTON1){
                     player.attackEnemy(enemy);
                     System.out.println("PV de l'ennemi : " + enemy.hp);
@@ -399,7 +399,7 @@ public class GamePanel extends JPanel implements Runnable, KeyListener, MouseLis
                     }
                 }
                 //Si l'ennemi est à moins de 40 pixels du joueur et qu'il fait clique droit
-                else if (player.isEnemyInHisRange(enemy, 80) && e.getButton() == MouseEvent.BUTTON3){
+                else if (player.isEnemyInHisRange(enemy, 100) && e.getButton() == MouseEvent.BUTTON3){
                     player.attackEnemy(enemy);
                     System.out.println("PV de l'ennemi : " + enemy.hp);
                     if (enemy.hp <= 0){
