@@ -13,7 +13,7 @@ public class Player {
     public int x, y;
     private int speed = 2;
     private boolean left, right, up, down;
-    private boolean talk = false;
+    public boolean talk = false;
     public int hp = 100;
     public int attack = 10;
     public long lastAttackTime = 0;
