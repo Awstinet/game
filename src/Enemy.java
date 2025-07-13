@@ -5,7 +5,7 @@ import java.awt.*;
 
 public class Enemy extends NPC{
     
-    public int attack, hp, range;
+    public int attack, hp, range, totalHP;
     public int sensibility; //Nombre de pixels duquel le joueur doit se tenir avant d'être repéré.
     public boolean isDead = false;
 
@@ -17,6 +17,7 @@ public class Enemy extends NPC{
         this.hp = hp;
         this.range = range;
         this.sensibility = sensibility;
+        this.totalHP = hp;
     }
 
     public Rectangle getBounds(){
@@ -65,13 +66,22 @@ public class Enemy extends NPC{
 
         if (currentTime - lastAttackTime >= 2000) {
             lastAttackTime = currentTime;
-            // p.changeHP(attack);
+            p.changeHP(attack);
             System.out.println("PV du joueur : " + p.hp);
         }
     }
 
     public void changeHP(int n){
         hp -= n;
+    }
+
+    public void drawHealthBar(Graphics g){
+        g.setColor(Color.red);
+        g.fillRect(x-8, y-10, 32, 5);
+        g.setColor(new Color(32,247,18));
+        g.fillRect(x-8, y-10, hp*32/totalHP, 5);
+        g.setColor(Color.black);
+        g.drawRect(x-8, y-10, 32, 5);
     }
 
 }

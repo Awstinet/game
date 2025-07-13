@@ -56,6 +56,15 @@ public class Player {
         g.drawImage(sprites[0], x, y, null); // Affiche la première frame
     }
 
+    public void drawHealthBar(Graphics g){
+        g.setColor(Color.red);
+        g.fillRect(x-8, y-10, 32, 5);
+        g.setColor(new Color(32,247,18));
+        g.fillRect(x-8, y-10, hp*32/100, 5);
+        g.setColor(Color.black);
+        g.drawRect(x-8, y-10, 32, 5);
+    }
+
     public void keyPressed(KeyEvent e) {
         int code = e.getKeyCode();
         if (code == KeyEvent.VK_Q) left = true;

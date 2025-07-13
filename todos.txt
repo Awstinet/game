@@ -12,9 +12,9 @@
 
 - Attaques (de près & de loin) : Fait le 12/07/25
 
-- Quand j'ouvre un dialogue avec un NPC sans le finir, puis que je vais voir un autre PNJ ça bug. : Corrigé
+- Quand j'ouvre un dialogue avec un NPC sans le finir, puis que je vais voir un autre PNJ ça bug. : Corrigé le 13/07/25
 
-- Ajouter barres de vie.
+- Ajouter barres de vie. : Fait le 13/07/25
 
 - NPC allié (Une classe par NPC allié.)
     - Me suit

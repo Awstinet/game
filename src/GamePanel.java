@@ -48,11 +48,11 @@ public class GamePanel extends JPanel implements Runnable, KeyListener, MouseLis
 
         //Chargement du sprite du joueur.
         try {
-            player = new Player(0, 0);
+            player = new Player(20, 20);
             player.spritePlayerLoader(1, 1); // 1 ligne, 1 colonne
 
-            lastPos.add(0); //Coordonnée X
-            lastPos.add(0); //Coordonnée Y
+            lastPos.add(20); //Coordonnée X
+            lastPos.add(20); //Coordonnée Y
 
         } catch (IOException e) {
             e.printStackTrace();
@@ -151,12 +151,6 @@ public class GamePanel extends JPanel implements Runnable, KeyListener, MouseLis
                     playerIsDead = true;
                     showGameOverScreen = true;
                     gameOverStartTime = System.currentTimeMillis();
-                }
-
-                for (NPC npc : actualMap.getNPCs()){
-                    if (npc instanceof Enemy){
-
-                    }
                 }
 
                 //Sauvegarde la position AVANT le déplacement
@@ -277,12 +271,14 @@ public class GamePanel extends JPanel implements Runnable, KeyListener, MouseLis
 
         //Dessine le joueur
         player.draw(g2);
+        player.drawHealthBar(g2);
 
         for (NPC n : actualMap.getNPCs()){
             if (n instanceof Enemy){
                 Enemy e = (Enemy) n;
                 if (!e.isDead){
                     e.draw(g2);
+                    e.drawHealthBar(g2);
                 }
             }
             else{
