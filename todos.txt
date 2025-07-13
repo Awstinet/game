@@ -16,8 +16,6 @@
 
 - Ajouter barres de vie. : Fait le 13/07/25
 
-- Impression que l'attaque ne se fait que quand l'ennemi est pile à la range indiquée et pas en dessous.
-
 - NPC allié (Une classe par NPC allié.)
     - Me suit
     - M'aide à attaquer
