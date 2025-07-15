@@ -19,7 +19,7 @@
 - NPC allié (Une classe par NPC allié.)
     - Me suit
     - M'aide à attaquer
-    - Dialogues à des moments clefs
+    - Dialogues à des moments clefs (Il faut une BDD.)
 
 - Menu, inventaire, outils utilisables
 

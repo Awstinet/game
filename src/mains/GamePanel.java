@@ -10,6 +10,7 @@ import src.background.Portal;
 import src.people.Enemy;
 import src.people.NPC;
 import src.people.Player;
+import src.people.Jake;
 
 import java.awt.*;
 import java.awt.event.*;
@@ -27,6 +28,7 @@ public class GamePanel extends JPanel implements Runnable, KeyListener, MouseLis
 
     private Player player;
     private NPC npc;
+    private Jake jake;
 
     ArrayList<Integer> lastPos = new ArrayList<Integer>();
 
@@ -46,6 +48,8 @@ public class GamePanel extends JPanel implements Runnable, KeyListener, MouseLis
     private boolean showGameOverScreen = false;
     private boolean readyToRestart = false;
     private int restartMessageAlpha = 0; //Pour le fondu.
+
+    private boolean showSkeletonDialog = false; 
 
 
 
@@ -97,6 +101,9 @@ public class GamePanel extends JPanel implements Runnable, KeyListener, MouseLis
         npc = new NPC(100, 100, 16, 16, new ArrayList<String>(List.of("Bonjour", "Caca", "ABABABA")), "assets/sprites/personnages/amogus.png",100, 100, 300, 100, 300, 300, 100, 300);
         Enemy squelette = new Enemy(100, 100, 11, 19, new ArrayList<>(), "assets/sprites/personnages/squelette.png", 
         25, 50, 1, 80, 100, 100, 300, 100, 300, 300, 100, 300);
+
+        jake = new Jake(8,8, 14, 15, new ArrayList<>(), "assets/sprites/personnages/Jake.png", 0,0);
+
 
         //Création de toutes les maps.
         Map map1 = new Map("test", 1600, 1200, "assets/maps/mapPaint.png",
@@ -168,6 +175,7 @@ public class GamePanel extends JPanel implements Runnable, KeyListener, MouseLis
 
                 //Mise à jour (déplacement)
                 player.update();
+                jake.followPlayer(player);
 
                 boolean hasCollided = false;
                 Rectangle playerBounds = new Rectangle(player.getX(), player.getY(), 16, 16);
@@ -219,12 +227,26 @@ public class GamePanel extends JPanel implements Runnable, KeyListener, MouseLis
                         else{
                             e.npcMove();
                         }
+
+                        if (jake.isEnemyNear(e)){
+                            jake.moveToEnemy(e);
+                            if (jake.isEnemyInHisRange(e)){
+                                jake.attackEnemy(e);
+                            }
+                        }
+
+                        if (e.hp <= 0) {
+                            e.isDead = true;
+                            jake.skeletonDead.set(0, true);
+                        }
+
                     } 
                     //Si pas collision, le npc bouge.
                     else{
                         n.npcMove();
                     }
                 }
+
                 
 
                 repaint();
@@ -240,6 +262,7 @@ public class GamePanel extends JPanel implements Runnable, KeyListener, MouseLis
 
     @Override
     protected void paintComponent(Graphics g) {
+
         super.paintComponent(g);
         Graphics2D g2 = (Graphics2D) g;
 
@@ -281,6 +304,7 @@ public class GamePanel extends JPanel implements Runnable, KeyListener, MouseLis
         //Dessine le joueur
         player.draw(g2);
         player.drawHealthBar(g2);
+        jake.draw(g2);
 
         for (NPC n : actualMap.getNPCs()){
             if (n instanceof Enemy){
@@ -319,6 +343,34 @@ public class GamePanel extends JPanel implements Runnable, KeyListener, MouseLis
 
         //Retour en "coordonnées écran"
         g2.setTransform(originalTransform);
+
+
+        if (jake.skeletonDead.get(0)) {
+            if (!jake.skeletonDead.get(1)) {
+                jake.skeletonDead.set(1, true);
+                showSkeletonDialog = true;
+            }
+
+            if (showSkeletonDialog) {
+                int width = (int)(dialogBox.getWidth() * zoom);
+                int height = (int)(dialogBox.getHeight() * zoom);
+
+                int dialogX = (getWidth() - width) / 2;
+                int dialogY = getHeight() - height - 20;
+
+                g2.drawImage(dialogBox, dialogX, dialogY, width, height, null);
+                g2.setColor(Color.BLACK);
+                g2.setFont(dialogFont);
+                FontMetrics fm = g2.getFontMetrics();
+
+                String message = jake.dialogSkeleton();
+                int lineHeight = fm.getHeight();
+                int totalTextHeight = lineHeight;
+                int lineY = dialogY + (height - totalTextHeight) / 2 + fm.getAscent();
+                g2.drawString(message, dialogX + 50, lineY);
+            }
+        }
+
 
         for (NPC n : actualMap.getNPCs()){
             if (n.isNear(player)) {
@@ -403,17 +455,11 @@ public class GamePanel extends JPanel implements Runnable, KeyListener, MouseLis
                 if (player.isEnemyInHisRange(enemy, 16) && e.getButton() == MouseEvent.BUTTON1){
                     player.attackEnemy(enemy);
                     System.out.println("PV de l'ennemi : " + enemy.hp);
-                    if (enemy.hp <= 0){
-                        enemy.isDead = true;
-                    }
                 }
                 //Si l'ennemi est à moins de 40 pixels du joueur et qu'il fait clique droit
                 else if (player.isEnemyInHisRange(enemy, 100) && e.getButton() == MouseEvent.BUTTON3){
                     player.attackEnemy(enemy);
                     System.out.println("PV de l'ennemi : " + enemy.hp);
-                    if (enemy.hp <= 0){
-                        enemy.isDead = true;
-                    }
                 }
             }
         }
@@ -422,6 +468,11 @@ public class GamePanel extends JPanel implements Runnable, KeyListener, MouseLis
 
     @Override
     public void keyPressed(KeyEvent e) {
+
+        if (showSkeletonDialog && e.getKeyCode() == KeyEvent.VK_E) {
+            showSkeletonDialog = false;
+            return; // Ne pas traiter d'autres touches tant que ce message est affiché
+        }
 
         if (showGameOverScreen && readyToRestart && e.getKeyCode() == KeyEvent.VK_E) {
             restartGame();

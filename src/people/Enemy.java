@@ -24,12 +24,14 @@ public class Enemy extends NPC{
         return new Rectangle(x, y, width, height);
     }
 
+    //Si le joueur est détectable par l'ennemi
     public boolean isPlayerNear(Player p){
         Rectangle playerBounds = new Rectangle(p.getX(), p.getY(), 16, 16);
         Rectangle enemySensibility = new Rectangle(x - sensibility, y - sensibility , width + 2 * sensibility, height + 2 * sensibility);
         return playerBounds.intersects(enemySensibility);        
     }
 
+    //Si le joueur est attaquable par l'ennemi
     public boolean isPlayerInHisRange(Player p){
         Rectangle playerBounds = new Rectangle(p.getX(), p.getY(), 16, 16);
         Rectangle enemyRange = new Rectangle(x - range, y - range , width + 2 * range, height + 2 * range);
@@ -58,7 +60,6 @@ public class Enemy extends NPC{
             y -= speed;
             if (y < py) y = py;
         }
-
     }
 
     public void attackPlayer (Player p){
