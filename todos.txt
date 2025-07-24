@@ -35,4 +35,4 @@
 
 - Paufiner les attaques : Quand plusieurs ennemis peuvent être touchés, une seule victime.
 
-- Sauvegardes avec liaison BDD ou Json (en local)
+- Sauvegardes avec liaison BDD ou Json (en local) (préférence pour Json en vrai)
