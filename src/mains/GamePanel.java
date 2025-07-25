@@ -228,16 +228,19 @@ public class GamePanel extends JPanel implements Runnable, KeyListener, MouseLis
                             e.npcMove();
                         }
 
+                        //Si Jake est proche de l'ennemi
                         if (jake.isEnemyNear(e)){
                             jake.moveToEnemy(e);
+
+                            //S'il peut l'attaquer
                             if (jake.isEnemyInHisRange(e)){
                                 jake.attackEnemy(e);
                             }
                         }
 
                         if (e.hp <= 0) {
-                            e.isDead = true;
-                            jake.skeletonDead.set(0, true);
+                            e.isDead = true; //L'ennemi est mort
+                            jake.skeletonDead.set(0, true); //Le dialogue après la mort du squelette peut être montré
                         }
 
                     } 
@@ -301,20 +304,21 @@ public class GamePanel extends JPanel implements Runnable, KeyListener, MouseLis
             }
         }
 
-        //Dessine le joueur
+        //Dessine le joueur, sa healthbar et Jake
         player.draw(g2);
         player.drawHealthBar(g2);
         jake.draw(g2);
 
+        //Pour tous les NPCs de la map actuelle
         for (NPC n : actualMap.getNPCs()){
-            if (n instanceof Enemy){
+            if (n instanceof Enemy){ //Si le NPC en question est un ennemi
                 Enemy e = (Enemy) n;
-                if (!e.isDead){
+                if (!e.isDead){ //S'il n'est pas mort, on le dessine lui et sa barre de vie
                     e.draw(g2);
                     e.drawHealthBar(g2);
                 }
             }
-            else{
+            else{ //On dessine les autres NPCs
                 n.draw(g2);
             }
         }
@@ -345,12 +349,13 @@ public class GamePanel extends JPanel implements Runnable, KeyListener, MouseLis
         g2.setTransform(originalTransform);
 
 
-        if (jake.skeletonDead.get(0)) {
+        if (jake.skeletonDead.get(0)) { //Si le squelette est mort et que le dialogue ne s'est pas affiché
             if (!jake.skeletonDead.get(1)) {
                 jake.skeletonDead.set(1, true);
                 showSkeletonDialog = true;
             }
 
+            //Montre le dialogue après la mort du squelette
             if (showSkeletonDialog) {
                 int width = (int)(dialogBox.getWidth() * zoom);
                 int height = (int)(dialogBox.getHeight() * zoom);
@@ -372,6 +377,7 @@ public class GamePanel extends JPanel implements Runnable, KeyListener, MouseLis
         }
 
 
+        //Pour afficher les dialogues avec un NPC
         for (NPC n : actualMap.getNPCs()){
             if (n.isNear(player)) {
                 if (player.isTalking() && !n.hasTalk()) {
@@ -409,6 +415,7 @@ public class GamePanel extends JPanel implements Runnable, KeyListener, MouseLis
             }
         }
 
+        //En gros c'est l'écran de Game Over
         if (showGameOverScreen && gameOverScreen != null) {
             g.drawImage(gameOverScreen, 0, 0, getWidth(), getHeight(), null);
 
@@ -456,7 +463,7 @@ public class GamePanel extends JPanel implements Runnable, KeyListener, MouseLis
                     player.attackEnemy(enemy);
                     System.out.println("PV de l'ennemi : " + enemy.hp);
                 }
-                //Si l'ennemi est à moins de 40 pixels du joueur et qu'il fait clique droit
+                //Si l'ennemi est à moins de 50 pixels du joueur et qu'il fait clique droit
                 else if (player.isEnemyInHisRange(enemy, 100) && e.getButton() == MouseEvent.BUTTON3){
                     player.attackEnemy(enemy);
                     System.out.println("PV de l'ennemi : " + enemy.hp);
@@ -471,7 +478,7 @@ public class GamePanel extends JPanel implements Runnable, KeyListener, MouseLis
 
         if (showSkeletonDialog && e.getKeyCode() == KeyEvent.VK_E) {
             showSkeletonDialog = false;
-            return; // Ne pas traiter d'autres touches tant que ce message est affiché
+            return; //Ne pas traiter d'autres touches tant que ce message est affiché
         }
 
         if (showGameOverScreen && readyToRestart && e.getKeyCode() == KeyEvent.VK_E) {
