@@ -52,6 +52,9 @@ public class GamePanel extends JPanel implements Runnable, KeyListener, MouseLis
     private boolean showSkeletonDialog = false; 
 
 
+    private boolean isMenuOn = false;
+
+
 
     public GamePanel() {
         this.setPreferredSize(new Dimension(800, 600));
@@ -159,6 +162,14 @@ public class GamePanel extends JPanel implements Runnable, KeyListener, MouseLis
 
                     repaint();
                     delta--;
+                    continue;
+                }
+
+                //Si on est dans le menu
+                if (isMenuOn){
+                    //Arrête le temps
+                    delta--;
+                    repaint();
                     continue;
                 }
 
@@ -341,13 +352,8 @@ public class GamePanel extends JPanel implements Runnable, KeyListener, MouseLis
             }
         }
 
-        
-
-
-
         //Retour en "coordonnées écran"
         g2.setTransform(originalTransform);
-
 
         if (jake.skeletonDead.get(0)) { //Si le squelette est mort et que le dialogue ne s'est pas affiché
             if (!jake.skeletonDead.get(1)) {
@@ -429,7 +435,7 @@ public class GamePanel extends JPanel implements Runnable, KeyListener, MouseLis
                 int x = (getWidth() - textWidth) / 2;
                 int y = getHeight() - 50;
 
-                // Applique la transparence
+                //Applique la transparence
                 g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, restartMessageAlpha / 255f));
                 g2d.setColor(Color.BLACK);
                 g2d.drawString(restartText, x, y);
@@ -437,6 +443,24 @@ public class GamePanel extends JPanel implements Runnable, KeyListener, MouseLis
                 g2d.dispose();
             }
         }  
+
+        if (isMenuOn){
+            Composite originalComposite = g2.getComposite();
+            g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.5f));
+            g2.setColor(Color.BLACK); 
+            g2.fillRect(0, 0, getWidth(), getHeight()); 
+            
+            g2.setComposite(originalComposite);
+
+
+            g2.setColor(Color.white);
+            g2.setFont(dialogFont);
+            String txtMenu = "JEU MIS EN PAUSE";
+            FontMetrics fm = g2.getFontMetrics();
+            int txtWidth = fm.stringWidth(txtMenu);
+            int x = (getWidth() - txtWidth) / 2;
+            g2.drawString(txtMenu, x, 50);
+        }
     }
 
     @Override
@@ -454,61 +478,69 @@ public class GamePanel extends JPanel implements Runnable, KeyListener, MouseLis
     @Override
     public void mouseClicked(MouseEvent e) {
 
-        //Pour chacun des NPCs de la carte :
-        for (NPC npc : actualMap.getNPCs()){
-            if (npc instanceof Enemy){ //Si le NPC en question est un ennemi :
-                Enemy enemy = (Enemy) npc;
-                //Si l'ennemi est à 8 pixel du joueur et qu'il presse clique gauche
-                if (player.isEnemyInHisRange(enemy, 16) && e.getButton() == MouseEvent.BUTTON1){
-                    player.attackEnemy(enemy);
-                    System.out.println("PV de l'ennemi : " + enemy.hp);
-                }
-                //Si l'ennemi est à moins de 50 pixels du joueur et qu'il fait clique droit
-                else if (player.isEnemyInHisRange(enemy, 100) && e.getButton() == MouseEvent.BUTTON3){
-                    player.attackEnemy(enemy);
-                    System.out.println("PV de l'ennemi : " + enemy.hp);
+        //Si on a pas mis sur pause
+        if (!isMenuOn){
+            //Pour chacun des NPCs de la carte :
+            for (NPC npc : actualMap.getNPCs()){
+                if (npc instanceof Enemy){ //Si le NPC en question est un ennemi :
+                    Enemy enemy = (Enemy) npc;
+                    //Si l'ennemi est à 8 pixel du joueur et qu'il presse clique gauche
+                    if (player.isEnemyInHisRange(enemy, 16) && e.getButton() == MouseEvent.BUTTON1){
+                        player.attackEnemy(enemy);
+                        System.out.println("PV de l'ennemi : " + enemy.hp);
+                    }
+                    //Si l'ennemi est à moins de 50 pixels du joueur et qu'il fait clique droit
+                    else if (player.isEnemyInHisRange(enemy, 100) && e.getButton() == MouseEvent.BUTTON3){
+                        player.attackEnemy(enemy);
+                        System.out.println("PV de l'ennemi : " + enemy.hp);
+                    }
                 }
             }
-        }
+        }   
     }
 
 
     @Override
     public void keyPressed(KeyEvent e) {
 
-        if (showSkeletonDialog && e.getKeyCode() == KeyEvent.VK_E) {
-            showSkeletonDialog = false;
-            return; //Ne pas traiter d'autres touches tant que ce message est affiché
-        }
-
-        if (showGameOverScreen && readyToRestart && e.getKeyCode() == KeyEvent.VK_E) {
-            restartGame();
+        if (e.getKeyCode() == KeyEvent.VK_ESCAPE){
+            isMenuOn = !isMenuOn; //Change le statut de notre variable.
             return;
         }
 
-        for(NPC n : actualMap.getNPCs()){
-            if (e.getKeyCode() == KeyEvent.VK_E && n.isNear(player) && n.allDialogs().size() > 0) {
-                if (!player.isTalking()) {
-                    player.changeTalk();
-                    currentDialogIndex = 0; //Démarrer au début du dialogue
-                } else {
-                    currentDialogIndex++;
-                    if (currentDialogIndex >= n.allDialogs().size()) {
-                        //Fin du dialogue
+        if (!isMenuOn){
+            if (showSkeletonDialog && e.getKeyCode() == KeyEvent.VK_E) {
+                showSkeletonDialog = false;
+                return; //Ne pas traiter d'autres touches tant que ce message est affiché
+            }
+
+            if (showGameOverScreen && readyToRestart && e.getKeyCode() == KeyEvent.VK_E) {
+                restartGame();
+                return;
+            }
+
+            for(NPC n : actualMap.getNPCs()){
+                if (e.getKeyCode() == KeyEvent.VK_E && n.isNear(player) && n.allDialogs().size() > 0) {
+                    if (!player.isTalking()) {
                         player.changeTalk();
-                        n.resetTalk();
-                        currentDialogIndex = 0;
+                        currentDialogIndex = 0; //Démarrer au début du dialogue
+                    } else {
+                        currentDialogIndex++;
+                        if (currentDialogIndex >= n.allDialogs().size()) {
+                            //Fin du dialogue
+                            player.changeTalk();
+                            n.resetTalk();
+                            currentDialogIndex = 0;
+                        }
                     }
                 }
+                else {
+                    currentDialogIndex = 0;
+                    n.resetTalk();
+                    player.talk = false;
+                }
             }
-            else {
-                currentDialogIndex = 0;
-                n.resetTalk();
-                player.talk = false;
-            }
-        }
-        
-
+        }        
         player.keyPressed(e);
     }
 
