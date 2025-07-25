@@ -51,8 +51,10 @@ public class GamePanel extends JPanel implements Runnable, KeyListener, MouseLis
 
     private boolean showSkeletonDialog = false; 
 
+    private Cursor invisibleCursor;
+    private Cursor defaultCursor;
 
-    private boolean isMenuOn = false;
+    public boolean isMenuOn = false;
 
     //Les boutons du menu
     Rectangle leaveButton = new Rectangle(325, 275, 150, 50);
@@ -129,6 +131,19 @@ public class GamePanel extends JPanel implements Runnable, KeyListener, MouseLis
 
         //On met la map 1 comme map actuelle.
         actualMap = map1;
+
+        //Curseur invisible
+        BufferedImage cursorImg = new BufferedImage(16, 16, BufferedImage.TYPE_INT_ARGB);
+        invisibleCursor = Toolkit.getDefaultToolkit().createCustomCursor(cursorImg, new Point(0, 0), "invisible");
+
+        //Curseur par défaut
+        defaultCursor = Cursor.getDefaultCursor();
+
+        //Ouais
+        setFocusable(true);
+        requestFocusInWindow();
+
+        setCursor(invisibleCursor); //Curseur invisible par défaut
 
     }
 
@@ -499,6 +514,7 @@ public class GamePanel extends JPanel implements Runnable, KeyListener, MouseLis
 
         if (e.getKeyCode() == KeyEvent.VK_ESCAPE){
             isMenuOn = !isMenuOn; //Change le statut de notre variable.
+            updateCursor(); //Et celui du curseur.
             return;
         }
 
@@ -588,5 +604,14 @@ public class GamePanel extends JPanel implements Runnable, KeyListener, MouseLis
         g.drawString("Quitter", leaveButton.x + 33, leaveButton.y + 31);
     }
 
+    public void updateCursor(){
+        //Affiche le curseur si le menu est ouvert, sinon le fait disparaitre
+        if (isMenuOn){
+            setCursor(defaultCursor);
+        }
+        else{
+            setCursor(invisibleCursor);
+        }
+    }
 
 }
