@@ -54,6 +54,9 @@ public class GamePanel extends JPanel implements Runnable, KeyListener, MouseLis
 
     private boolean isMenuOn = false;
 
+    //Les boutons du menu
+    Rectangle leaveButton = new Rectangle(325, 275, 150, 50);
+
 
 
     public GamePanel() {
@@ -445,22 +448,8 @@ public class GamePanel extends JPanel implements Runnable, KeyListener, MouseLis
         }  
 
         if (isMenuOn){
-            Composite originalComposite = g2.getComposite();
-            g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.5f));
-            g2.setColor(Color.BLACK); 
-            g2.fillRect(0, 0, getWidth(), getHeight()); 
-            
-            g2.setComposite(originalComposite);
-
-
-            g2.setColor(Color.white);
-            g2.setFont(dialogFont);
-            String txtMenu = "JEU MIS EN PAUSE";
-            FontMetrics fm = g2.getFontMetrics();
-            int txtWidth = fm.stringWidth(txtMenu);
-            int x = (getWidth() - txtWidth) / 2;
-            g2.drawString(txtMenu, x, 50);
-        }
+            drawMenu(g2);
+        }   
     }
 
     @Override
@@ -497,6 +486,11 @@ public class GamePanel extends JPanel implements Runnable, KeyListener, MouseLis
                 }
             }
         }   
+        else{
+            if (leaveButton.contains(e.getPoint())){
+                System.exit(0);
+            }
+        }
     }
 
 
@@ -565,6 +559,33 @@ public class GamePanel extends JPanel implements Runnable, KeyListener, MouseLis
         playerIsDead = false;
         readyToRestart = false;
         restartMessageAlpha = 0;
+    }
+
+    private void drawMenu(Graphics2D g){
+
+        Composite originalComposite = g.getComposite();
+
+        //Filtre noir
+        g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.5f));
+        g.setColor(Color.BLACK); 
+        g.fillRect(0, 0, getWidth(), getHeight()); 
+            
+        g.setComposite(originalComposite);
+        
+        //Titre du menu
+        g.setColor(Color.white);
+        g.setFont(dialogFont);
+        String txtMenu = "JEU MIS EN PAUSE";
+        FontMetrics fm = g.getFontMetrics();
+        int txtWidth = fm.stringWidth(txtMenu);
+        int x = (getWidth() - txtWidth) / 2;
+        g.drawString(txtMenu, x, 50);
+
+        //Bouton pour leave
+        g.setColor(Color.GRAY);
+        g.fillRect(leaveButton.x, leaveButton.y, leaveButton.width, leaveButton.height);
+        g.setColor(Color.WHITE);
+        g.drawString("Quitter", leaveButton.x + 33, leaveButton.y + 31);
     }
 
 
