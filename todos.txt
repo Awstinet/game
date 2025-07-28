@@ -46,3 +46,4 @@
     └──> Pour les PNJs sauvegarde des moments clefs, dialogues déjà dits et tout (ou trouver moyen de stocker ça dans la classe Player)
 
 - Tous les NPCs, les objets, maps, obstacles, portails sont dans un JSON qu'il faudra lire pour les générer.
+    └──> Créer une fonction pour chacune des classes (loadTools(Tool t), loadNPCs(NPC n) etc) ou créer une fonction généralisée (loadObject(Object o))
