@@ -4,7 +4,7 @@ import javax.swing.JFrame;
 
 public class Game {
     public static void main(String[] args) {
-        JFrame frame = new JFrame("2D Game");
+        JFrame frame = new JFrame("testJeu");
         GamePanel panel = new GamePanel();
 
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);

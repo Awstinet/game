@@ -39,6 +39,8 @@
 
 - Paufiner les attaques : Quand plusieurs ennemis peuvent être touchés, une seule victime.
 
+- Système de quêtes : L'UI pour ça est déjà dans l'inventaire.
+
 - Sauvegardes avec liaison BDD ou Json (en local) (préférence pour Json en vrai)
     ├──> Stockage des coordonnées, Items, ennemis morts dans la map (si je suis chaud), nb de flèches
     └──> Pour les PNJs sauvegarde des moments clefs, dialogues déjà dits et tout (ou trouver moyen de stocker ça dans la classe Player)
