@@ -11,6 +11,7 @@ import src.people.Enemy;
 import src.people.NPC;
 import src.people.Player;
 import src.people.Jake;
+import src.objects.*;
 
 import java.awt.*;
 import java.awt.event.*;
@@ -55,6 +56,8 @@ public class GamePanel extends JPanel implements Runnable, KeyListener, MouseLis
     private Cursor defaultCursor;
 
     public boolean isMenuOn = false;
+
+    public Tool key;
 
     //Les boutons du menu
     Rectangle leaveButton = new Rectangle(325, 275, 150, 50);
@@ -105,6 +108,9 @@ public class GamePanel extends JPanel implements Runnable, KeyListener, MouseLis
         Arbre arbre = new Arbre(32, 32, 56, 48, 22, 11, 22, arbreImg);
         Obstacle rocher = new Obstacle(100, 100, 32, 10, rockImg);
 
+        //Création des objets
+        key = new Tool("clef", 10, 16, "assets/sprites/objets/key.png");
+
         //Création des NPCs.
         npc = new NPC(100, 100, 16, 16, new ArrayList<String>(List.of("Bonjour", "Caca", "ABABABA")), "assets/sprites/personnages/amogus.png",100, 100, 300, 100, 300, 300, 100, 300);
         Enemy squelette = new Enemy(100, 100, 11, 19, new ArrayList<>(), "assets/sprites/personnages/squelette.png", 
@@ -128,21 +134,15 @@ public class GamePanel extends JPanel implements Runnable, KeyListener, MouseLis
         //Création des portails
         lstPortals.add(new Portal(map1, map2, 150, 150));
         lstPortals.add(new Portal(map2, map1, 170, 170));
+        
+        actualMap = map1; //On met la map 1 comme map actuelle.
 
-        //On met la map 1 comme map actuelle.
-        actualMap = map1;
-
-        //Curseur invisible
-        BufferedImage cursorImg = new BufferedImage(16, 16, BufferedImage.TYPE_INT_ARGB);
+        //Curseurs
+        BufferedImage cursorImg = new BufferedImage(16, 16, BufferedImage.TYPE_INT_ARGB); //Curseau invisible
         invisibleCursor = Toolkit.getDefaultToolkit().createCustomCursor(cursorImg, new Point(0, 0), "invisible");
-
-        //Curseur par défaut
-        defaultCursor = Cursor.getDefaultCursor();
-
-        //Ouais
+        defaultCursor = Cursor.getDefaultCursor(); //Curseur normal
         setFocusable(true);
         requestFocusInWindow();
-
         setCursor(invisibleCursor); //Curseur invisible par défaut
 
     }
@@ -197,6 +197,10 @@ public class GamePanel extends JPanel implements Runnable, KeyListener, MouseLis
                     showGameOverScreen = true;
                     gameOverStartTime = System.currentTimeMillis();
                 }
+
+                System.out.println(player.getPlayerObjects());
+
+
 
                 //Sauvegarde la position AVANT le déplacement
                 int lastX = player.getX();
@@ -270,6 +274,9 @@ public class GamePanel extends JPanel implements Runnable, KeyListener, MouseLis
                         if (e.hp <= 0) {
                             e.isDead = true; //L'ennemi est mort
                             jake.skeletonDead.set(0, true); //Le dialogue après la mort du squelette peut être montré
+                            
+                            //Puisque le squelette drop la clef, on l'ajoute dans l'inventaire du joueur : 
+                            player.addPlayerObject(key);
                         }
 
                     } 

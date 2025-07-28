@@ -21,7 +21,13 @@
     - M'aide à attaquer
     - Dialogues à des moments clefs
 
-- Menu, inventaire, outils utilisables
+- Menu : Fait le 23/07/25
+
+- Outils utilisables (Donné par monstre (ou NPC) & utilisables à des moments clefs.) : Fait le 28/07/25
+
+- Inventaire
+
+- Carte
 
 - Items trouvables en jeu (coffres, trucs comme ça)
 
@@ -38,3 +44,5 @@
 - Sauvegardes avec liaison BDD ou Json (en local) (préférence pour Json en vrai)
     ├──> Stockage des coordonnées, Items, ennemis morts dans la map (si je suis chaud), nb de flèches
     └──> Pour les PNJs sauvegarde des moments clefs, dialogues déjà dits et tout (ou trouver moyen de stocker ça dans la classe Player)
+
+- Tous les NPCs, les objets, maps, obstacles, portails sont dans un JSON qu'il faudra lire pour les générer.

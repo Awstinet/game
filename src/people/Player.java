@@ -6,8 +6,11 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import javax.imageio.ImageIO;
+
+import src.objects.*;
 
 public class Player {
     public int x, y;
@@ -20,6 +23,8 @@ public class Player {
 
     private BufferedImage spriteSheet;
     private BufferedImage[] sprites;
+
+    public HashMap<Tool, Integer> lstObjects = new HashMap<Tool, Integer>();
 
     public Player(int x, int y) throws IOException {
         this.x = x;
@@ -139,6 +144,21 @@ public class Player {
         Rectangle playerBounds = new Rectangle(getX(), getY(), 16, 16);
         Rectangle enemyBounds = new Rectangle(e.x - range, e.y - range , e.width + 2 * range, e.height + 2 * range);
         return playerBounds.intersects(enemyBounds);
+    }
+
+    public HashMap<String, Integer> getPlayerObjects(){
+        HashMap<String, Integer> newHashMap = new HashMap<>(); 
+        lstObjects.forEach((key, value) -> newHashMap.put(key.name, value));
+        return newHashMap;
+    }
+
+    public void addPlayerObject(Tool object){
+        if (lstObjects.containsKey(object)){
+            lstObjects.replace(object, lstObjects.get(object)+1);
+        }
+        else{
+            lstObjects.put(object, 1);
+        }
     }
     
 }
