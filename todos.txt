@@ -27,7 +27,7 @@
 
 - Inventaire
 
-- Carte
+- Carte -> Récupérer l'image de la carte et la rétrécir + ajouter un point aux cos du joueur
 
 - Animation de sprite quand on marche, quand on attaque (pour joueur & pnjs), quand on loot un item, quand une animation est nécessaire en bref.
 
