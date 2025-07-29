@@ -56,6 +56,7 @@ public class GamePanel extends JPanel implements Runnable, KeyListener, MouseLis
     private Cursor defaultCursor;
 
     public boolean isMenuOn = false;
+    public boolean isInventoryOn = false;
 
     public Tool key;
 
@@ -111,6 +112,14 @@ public class GamePanel extends JPanel implements Runnable, KeyListener, MouseLis
         //Création des objets
         key = new Tool("clef", 10, 16, "assets/sprites/objets/key.png");
 
+        player.addPlayerObject(new Tool("key2", 22, 35, "assets/sprites/objets/key2.png"));
+        player.addPlayerObject(new Tool("key3", 22, 35, "assets/sprites/objets/key2.png"));
+        player.addPlayerObject(new Tool("key4", 22, 35, "assets/sprites/objets/key2.png"));
+        player.addPlayerObject(new Tool("key5", 22, 35, "assets/sprites/objets/key2.png"));
+        player.addPlayerObject(new Tool("key6", 22, 35, "assets/sprites/objets/key2.png"));
+
+
+        
         //Création des NPCs.
         npc = new NPC(100, 100, 16, 16, new ArrayList<String>(List.of("Bonjour", "Caca", "ABABABA")), "assets/sprites/personnages/amogus.png",100, 100, 300, 100, 300, 300, 100, 300);
         Enemy squelette = new Enemy(100, 100, 11, 19, new ArrayList<>(), "assets/sprites/personnages/squelette.png", 
@@ -191,15 +200,18 @@ public class GamePanel extends JPanel implements Runnable, KeyListener, MouseLis
                     continue;
                 }
 
+                if (isInventoryOn){
+                    delta--;
+                    repaint();
+                    continue;
+                }
+
                 //Si le joueur n'a plus de PVs, on affichera l'écran de game over à la prochaine itération.
                 if (player.hp <= 0 && !showGameOverScreen) {
                     playerIsDead = true;
                     showGameOverScreen = true;
                     gameOverStartTime = System.currentTimeMillis();
                 }
-
-                System.out.println(player.getPlayerObjects());
-
 
 
                 //Sauvegarde la position AVANT le déplacement
@@ -291,7 +303,7 @@ public class GamePanel extends JPanel implements Runnable, KeyListener, MouseLis
                 repaint();
                 delta--;
             }
-        }
+        }   
     }
 
     public void update() {
@@ -469,9 +481,14 @@ public class GamePanel extends JPanel implements Runnable, KeyListener, MouseLis
             }
         }  
 
+        if (isInventoryOn){
+            drawInventory(g2);
+        }
+
         if (isMenuOn){
             drawMenu(g2);
         }   
+        
     }
 
     @Override
@@ -490,7 +507,7 @@ public class GamePanel extends JPanel implements Runnable, KeyListener, MouseLis
     public void mouseClicked(MouseEvent e) {
 
         //Si on a pas mis sur pause
-        if (!isMenuOn){
+        if (!isMenuOn && !isInventoryOn){
             //Pour chacun des NPCs de la carte :
             for (NPC npc : actualMap.getNPCs()){
                 if (npc instanceof Enemy){ //Si le NPC en question est un ennemi :
@@ -533,6 +550,11 @@ public class GamePanel extends JPanel implements Runnable, KeyListener, MouseLis
 
             if (showGameOverScreen && readyToRestart && e.getKeyCode() == KeyEvent.VK_E) {
                 restartGame();
+                return;
+            }
+
+            if (e.getKeyCode() == KeyEvent.VK_A){
+                isInventoryOn = !isInventoryOn;
                 return;
             }
 
@@ -619,6 +641,50 @@ public class GamePanel extends JPanel implements Runnable, KeyListener, MouseLis
         else{
             setCursor(invisibleCursor);
         }
+    }
+
+    private void drawInventory(Graphics2D graphics){
+
+        BufferedImage imageInventory;
+        Composite originalComposite = graphics.getComposite();
+
+        BufferedImage imageObject;
+
+        //Filtre noir
+        graphics.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.5f));
+        graphics.setColor(Color.BLACK); 
+        graphics.fillRect(0, 0, getWidth(), getHeight()); 
+
+        graphics.setComposite(originalComposite);
+
+        try {
+            imageInventory = ImageIO.read(new File("assets/sprites/divers/inventaire.png"));
+            graphics.drawImage(imageInventory, (getWidth() - imageInventory.getWidth())/2, (getHeight() - imageInventory.getHeight())/2, null);
+        }
+        catch (IOException e){
+            e.printStackTrace();
+        }
+
+        //Coordonnées de la première case
+        int xSlot = 85;
+        int ySlot = 126;
+
+        for (Tool object : player.lstObjects){
+            imageObject = object.image;
+            graphics.drawImage(imageObject, xSlot +  (35 - object.width) / 2, ySlot + (35 - object.height) / 2, null);
+
+            xSlot += 84;
+            if (xSlot >= 85*4){
+                xSlot = 85;
+                ySlot += 88;
+            }
+        }
+
+        graphics.setFont(dialogFont);
+        graphics.setColor(Color.WHITE);
+        graphics.drawString(String.valueOf(player.nbCoins), 91, 436);
+        graphics.drawString(String.valueOf(player.nbArrows), 295, 436);
+
     }
 
 }

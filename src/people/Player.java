@@ -6,7 +6,6 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashMap;
 
 import javax.imageio.ImageIO;
 
@@ -20,11 +19,13 @@ public class Player {
     public int hp = 100;
     public int attack = 10;
     public long lastAttackTime = 0;
+    public int nbArrows = 999;
+    public int nbCoins = 1789;
 
     private BufferedImage spriteSheet;
     private BufferedImage[] sprites;
 
-    public HashMap<Tool, Integer> lstObjects = new HashMap<Tool, Integer>();
+    public ArrayList<Tool> lstObjects = new ArrayList<Tool>();
 
     public Player(int x, int y) throws IOException {
         this.x = x;
@@ -146,19 +147,14 @@ public class Player {
         return playerBounds.intersects(enemyBounds);
     }
 
-    public HashMap<String, Integer> getPlayerObjects(){
-        HashMap<String, Integer> newHashMap = new HashMap<>(); 
-        lstObjects.forEach((key, value) -> newHashMap.put(key.name, value));
-        return newHashMap;
+    public ArrayList<String> getPlayerObjects(){
+        ArrayList<String> newArrayList = new ArrayList<>(); 
+        lstObjects.forEach((key) -> newArrayList.add(key.name));
+        return newArrayList;
     }
 
     public void addPlayerObject(Tool object){
-        if (lstObjects.containsKey(object)){
-            lstObjects.replace(object, lstObjects.get(object)+1);
-        }
-        else{
-            lstObjects.put(object, 1);
-        }
+        lstObjects.add(object);
     }
     
 }

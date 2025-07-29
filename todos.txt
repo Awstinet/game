@@ -25,7 +25,7 @@
 
 - Outils utilisables (Donné par monstre (ou NPC) & utilisables à des moments clefs.) : Fait le 28/07/25
 
-- Inventaire
+- Inventaire : Fait le 29/07/25
 
 - Carte -> Récupérer l'image de la carte et la rétrécir + ajouter un point aux cos du joueur
 
@@ -34,8 +34,6 @@
 - Mettre de la musique au jeu
 
 - Cinématiques
-
-- Quand game over, ajouter quelque chose avant de respawn (une épreuve -> Que pour le jeu final.)
 
 - Paufiner les attaques : Quand plusieurs ennemis peuvent être touchés, une seule victime.
 
