@@ -16,7 +16,7 @@ public class Map {
     public String pathImage;
     public int width, height;
     public String name;
-    private BufferedImage image;
+    public BufferedImage image;
     private ArrayList<NPC> lstNPCs;
     private ArrayList<Obstacle> lstObstacles;
 

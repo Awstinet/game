@@ -57,6 +57,7 @@ public class GamePanel extends JPanel implements Runnable, KeyListener, MouseLis
 
     public boolean isMenuOn = false;
     public boolean isInventoryOn = false;
+    public boolean isMapOn = false;
 
     public Tool key;
 
@@ -201,6 +202,12 @@ public class GamePanel extends JPanel implements Runnable, KeyListener, MouseLis
                 }
 
                 if (isInventoryOn){
+                    delta--;
+                    repaint();
+                    continue;
+                }
+
+                if (isMapOn){
                     delta--;
                     repaint();
                     continue;
@@ -485,6 +492,10 @@ public class GamePanel extends JPanel implements Runnable, KeyListener, MouseLis
             drawInventory(g2);
         }
 
+        if (isMapOn){
+            drawMap(g2);
+        }
+
         if (isMenuOn){
             drawMenu(g2);
         }   
@@ -555,6 +566,12 @@ public class GamePanel extends JPanel implements Runnable, KeyListener, MouseLis
 
             if (e.getKeyCode() == KeyEvent.VK_A){
                 isInventoryOn = !isInventoryOn;
+                return;
+            }
+
+            if (e.getKeyCode() == KeyEvent.VK_M){
+                isMapOn = !isMapOn;
+                updateCursor();
                 return;
             }
 
@@ -635,7 +652,7 @@ public class GamePanel extends JPanel implements Runnable, KeyListener, MouseLis
 
     public void updateCursor(){
         //Affiche le curseur si le menu est ouvert, sinon le fait disparaitre
-        if (isMenuOn){
+        if (isMenuOn || isMapOn){
             setCursor(defaultCursor);
         }
         else{
@@ -685,6 +702,47 @@ public class GamePanel extends JPanel implements Runnable, KeyListener, MouseLis
         graphics.drawString(String.valueOf(player.nbCoins), 91, 436);
         graphics.drawString(String.valueOf(player.nbArrows), 295, 436);
 
+    }
+
+    private void drawMap(Graphics2D g){
+
+        Composite originalComposite = g.getComposite();
+
+        //Filtre noir
+        g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.5f));
+        g.setColor(Color.BLACK); 
+        g.fillRect(0, 0, getWidth(), getHeight()); 
+
+        g.setComposite(originalComposite);
+
+        g.drawImage(actualMap.image.getScaledInstance(600, 450, Image.SCALE_DEFAULT), (getWidth() - 600)/2, (getHeight()-450)/2, null);
+        
+        //Dessiner les obstacles
+        double scaleX = 600.0 / 1600.0;
+        double scaleY = 450.0 / 1200.0;
+
+        int mapX = (getWidth() - 600) / 2;
+        int mapY = (getHeight() - 450) / 2;
+
+        for (Obstacle o : actualMap.getObstacles()) {
+            int scaledX = (int)(o.x * scaleX) + mapX;
+            int scaledY = (int)(o.y * scaleY) + mapY;
+            int scaledWidth = (int)(o.width * scaleX);
+            int scaledHeight = (int)(o.height * scaleY);
+
+            g.drawImage(
+                o.image.getScaledInstance(scaledWidth, scaledHeight, Image.SCALE_DEFAULT),
+                scaledX,
+                scaledY,
+                null
+            );
+        }
+
+        g.setColor(Color.RED);
+        g.fillRect((int)(player.x * 0.375 + (getWidth() - 600) / 2), 
+        (int)(player.y * 0.375 + (getHeight() - 450) / 2),  
+        6, 
+        6);
     }
 
 }
