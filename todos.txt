@@ -45,3 +45,5 @@
 
 - Tous les NPCs, les objets, maps, obstacles, portails sont dans un JSON qu'il faudra lire pour les générer.
     └──> Créer une fonction pour chacune des classes (loadTools(Tool t), loadNPCs(NPC n) etc) ou créer une fonction généralisée (loadObject(Object o))
+
+- Ajouter des UIs sur l'écran du joueur, en haut à droite pour indiquer les touches pour l'inventaire & la carte.
