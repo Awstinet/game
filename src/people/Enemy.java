@@ -26,14 +26,14 @@ public class Enemy extends NPC{
 
     //Si le joueur est détectable par l'ennemi
     public boolean isPlayerNear(Player p){
-        Rectangle playerBounds = new Rectangle(p.getX(), p.getY(), 16, 16);
+        Rectangle playerBounds = new Rectangle(p.getX(), p.getY(), p.width, p.height);
         Rectangle enemySensibility = new Rectangle(x - sensibility, y - sensibility , width + 2 * sensibility, height + 2 * sensibility);
         return playerBounds.intersects(enemySensibility);        
     }
 
     //Si le joueur est attaquable par l'ennemi
     public boolean isPlayerInHisRange(Player p){
-        Rectangle playerBounds = new Rectangle(p.getX(), p.getY(), 16, 16);
+        Rectangle playerBounds = new Rectangle(p.getX(), p.getY(), p.width, p.height);
         Rectangle enemyRange = new Rectangle(x - range, y - range , width + 2 * range, height + 2 * range);
         return playerBounds.intersects(enemyRange);
     }

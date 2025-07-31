@@ -22,26 +22,36 @@ public class Player {
     public int nbArrows = 999;
     public int nbCoins = 1789;
 
+    public int width = 20;
+    public int height = 30;
+
     private BufferedImage spriteSheet;
-    private BufferedImage[] sprites;
+    private BufferedImage[][] sprites;
+
+    private int currentFrame = 0;
+    private long lastFrameTime = 0;
+    private int frameDelay = 200;
+    private int currentRow = 1;
+
+    private boolean isMoving = false;
 
     public ArrayList<Tool> lstObjects = new ArrayList<Tool>();
 
     public Player(int x, int y) throws IOException {
         this.x = x;
         this.y = y;
-        spriteSheet = ImageIO.read(new File("assets/sprites/personnages/chevalierTest.png"));
+        spriteSheet = ImageIO.read(new File("assets/sprites/personnages/playerSpriteSheet.png"));
     }
 
-    public void spritePlayerLoader(int rows, int columns) {
-        int spriteWidth = 16;
-        int spriteHeight = 16;
-        sprites = new BufferedImage[rows * columns];
+    //Pour charger individuellement chacune des images du spritesheet.
+    public void spritePlayerLoader(int rows, int columns){
+
+        sprites = new BufferedImage[rows][columns];
 
         for (int i = 0; i < rows; i++) {
             for (int j = 0; j < columns; j++) {
-                sprites[i * columns + j] = spriteSheet.getSubimage(
-                    j * spriteWidth, i * spriteHeight, spriteWidth, spriteHeight
+                sprites[i][j] = spriteSheet.getSubimage(
+                    j * width, i * height, width, height
                 );
             }
         }
@@ -49,17 +59,48 @@ public class Player {
 
     public void update() {
 
-        int spriteWidth = 16;
-        int spriteHeight = 16;
+        isMoving = false;
 
-        if (left && x - speed >= 0) x -= speed;
-        if (right && x + speed + spriteWidth <= 1600) x += speed;
-        if (up && y - speed >= 0) y -= speed;
-        if (down && y + speed + spriteHeight <= 1200) y += speed;
+        if (left && x - speed >= 0){ 
+            x -= speed;
+            isMoving = true;
+            currentRow = 3;
+        }
+        if (right && x + speed + width <= 1600){
+            x += speed;
+            isMoving = true;
+            currentRow = 1;
+        } 
+        if (up && y - speed >= 0) {
+            y -= speed;  
+            isMoving = true;
+            currentRow = 2;
+        }
+
+        if (down && y + speed + height <= 1200) {
+            y += speed;
+            isMoving = true;
+            currentRow = 0;
+        } 
+
+        updateAnimation();
     }
 
     public void draw(Graphics g) {
-        g.drawImage(sprites[0], x, y, null); // Affiche la première frame
+        g.drawImage(sprites[currentRow][currentFrame], x, y, null);
+    }
+
+    private void updateAnimation() {
+        if (!isMoving) {
+            currentFrame = 0;
+            return;
+        }
+
+        long now = System.currentTimeMillis();
+        if (now - lastFrameTime >= frameDelay) {
+            currentFrame = (currentFrame + 1) % 4;
+            lastFrameTime = now;
+        }
     }
 
     public void drawHealthBar(Graphics g){
@@ -103,7 +144,7 @@ public class Player {
             if (e.isDead){return false;} //Si c'est un ennemi mort, alors il n'y aura jamais de collision avec lui.
         }
 
-        Rectangle playerRect = new Rectangle(x, y, 16, 16);
+        Rectangle playerRect = new Rectangle(x, y, width, height);
 
         Rectangle npcRect = new Rectangle(npc.getX(), npc.getY(), npc.getWidth(), npc.getHeight());
         return playerRect.intersects(npcRect);
@@ -142,7 +183,7 @@ public class Player {
     }
 
     public boolean isEnemyInHisRange(Enemy e, int range){
-        Rectangle playerBounds = new Rectangle(getX(), getY(), 16, 16);
+        Rectangle playerBounds = new Rectangle(getX(), getY(), width, height);
         Rectangle enemyBounds = new Rectangle(e.x - range, e.y - range , e.width + 2 * range, e.height + 2 * range);
         return playerBounds.intersects(enemyBounds);
     }

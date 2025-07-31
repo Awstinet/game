@@ -75,7 +75,7 @@ public class GamePanel extends JPanel implements Runnable, KeyListener, MouseLis
         //Chargement du sprite du joueur.
         try {
             player = new Player(20, 20);
-            player.spritePlayerLoader(1, 1); // 1 ligne, 1 colonne
+            player.spritePlayerLoader(4, 4);
 
             lastPos.add(20); //Coordonnée X
             lastPos.add(20); //Coordonnée Y
@@ -230,7 +230,7 @@ public class GamePanel extends JPanel implements Runnable, KeyListener, MouseLis
                 jake.followPlayer(player);
 
                 boolean hasCollided = false;
-                Rectangle playerBounds = new Rectangle(player.getX(), player.getY(), 16, 16);
+                Rectangle playerBounds = new Rectangle(player.getX(), player.getY(), player.width, player.height);
 
                 //Si le joueur passer sur un portail du monde dans lequel il est, la map actuelle change.
                 for (Portal portal : lstPortals){
