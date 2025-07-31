@@ -49,6 +49,8 @@ public class GamePanel extends JPanel implements Runnable, KeyListener, MouseLis
     private boolean showGameOverScreen = false;
     private boolean readyToRestart = false;
     private int restartMessageAlpha = 0; //Pour le fondu.
+    private BufferedImage backpackIcon;
+    private BufferedImage mapIcon;
 
     private boolean showSkeletonDialog = false; 
 
@@ -92,6 +94,8 @@ public class GamePanel extends JPanel implements Runnable, KeyListener, MouseLis
             arbreImg = ImageIO.read(new File("assets/sprites/obstacles/arbre.png"));
             rockImg = ImageIO.read(new File("assets/sprites/obstacles/rocher.png"));
             gameOverScreen = ImageIO.read(new File("assets/sprites/divers/gameOverScreen.png"));
+            backpackIcon = ImageIO.read(new File("assets/sprites/divers/backpackIcon.png"));
+            mapIcon = ImageIO.read(new File("assets/sprites/divers/mapIcon.png"));
 
 
             File fontFile = new File("assets/fonts/pixelify/PixelifySans-SemiBold.ttf");
@@ -486,7 +490,16 @@ public class GamePanel extends JPanel implements Runnable, KeyListener, MouseLis
 
                 g2d.dispose();
             }
-        }  
+        }
+
+        if (!isInventoryOn && !isMapOn && !isMenuOn){
+            g2.scale(2, 2);
+            g2.drawImage(backpackIcon, 3, 6, null);
+            g2.drawImage(mapIcon, 30, 3, null);
+        }
+
+        g2.setTransform(originalTransform);
+
 
         if (isInventoryOn){
             drawInventory(g2);
@@ -498,7 +511,7 @@ public class GamePanel extends JPanel implements Runnable, KeyListener, MouseLis
 
         if (isMenuOn){
             drawMenu(g2);
-        }   
+        }           
         
     }
 
