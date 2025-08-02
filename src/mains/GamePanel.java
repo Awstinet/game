@@ -78,6 +78,7 @@ public class GamePanel extends JPanel implements Runnable, KeyListener, MouseLis
         try {
             player = new Player(20, 20);
             player.spritePlayerLoader(4, 4);
+            player.swordSpritePlayerLoader(5, 1);
 
             lastPos.add(20); //Coordonnée X
             lastPos.add(20); //Coordonnée Y

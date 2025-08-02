@@ -25,8 +25,11 @@ public class Player {
     public int width = 20;
     public int height = 30;
 
-    private BufferedImage spriteSheet;
+    private BufferedImage spriteSheet;    
     private BufferedImage[][] sprites;
+
+    private BufferedImage swordSpriteSheet;
+    public BufferedImage[][] swordSprites;
 
     private int currentFrame = 0;
     private long lastFrameTime = 0;
@@ -52,6 +55,18 @@ public class Player {
             for (int j = 0; j < columns; j++) {
                 sprites[i][j] = spriteSheet.getSubimage(
                     j * width, i * height, width, height
+                );
+            }
+        }
+    }
+
+    public void swordSpritePlayerLoader(int rows, int columns){
+        swordSprites = new BufferedImage[rows][columns];
+
+        for (int i = 0; i < rows; i++){
+            for (int j = 0; j < columns; j++){
+                swordSprites[i][j] = swordSpriteSheet.getSubimage(
+                    j * 50, i * 39, 50, 39
                 );
             }
         }
@@ -89,6 +104,7 @@ public class Player {
     public void draw(Graphics g) {
         g.drawImage(sprites[currentRow][currentFrame], x, y, null);
     }
+
 
     private void updateAnimation() {
         if (!isMoving) {
