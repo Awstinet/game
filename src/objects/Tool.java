@@ -6,6 +6,7 @@ import java.io.IOException;
 import javax.imageio.ImageIO;
 import java.awt.*;
 
+//On renommera Item dans le prochain jeu.
 public class Tool {
     
     public String pathImage;

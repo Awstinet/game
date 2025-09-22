@@ -78,7 +78,6 @@ public class GamePanel extends JPanel implements Runnable, KeyListener, MouseLis
         try {
             player = new Player(20, 20);
             player.spritePlayerLoader(4, 4);
-            player.swordSpritePlayerLoader(5, 1);
 
             lastPos.add(20); //Coordonnée X
             lastPos.add(20); //Coordonnée Y
@@ -310,7 +309,7 @@ public class GamePanel extends JPanel implements Runnable, KeyListener, MouseLis
                     }
                 }
 
-                
+                System.out.println(player.isAttacking);
 
                 repaint();
                 delta--;
@@ -517,20 +516,7 @@ public class GamePanel extends JPanel implements Runnable, KeyListener, MouseLis
     }
 
     @Override
-    public void mousePressed(MouseEvent e){}
-
-    @Override
-    public void mouseEntered(MouseEvent e){}
-
-    @Override
-    public void mouseReleased(MouseEvent e) {}
-
-    @Override 
-    public void mouseExited(MouseEvent e) {}
-
-    @Override
-    public void mouseClicked(MouseEvent e) {
-
+    public void mousePressed(MouseEvent e){
         //Si on a pas mis sur pause
         if (!isMenuOn && !isInventoryOn){
             //Pour chacun des NPCs de la carte :
@@ -555,7 +541,20 @@ public class GamePanel extends JPanel implements Runnable, KeyListener, MouseLis
                 System.exit(0);
             }
         }
+        player.mousePressed(e);
     }
+
+    @Override
+    public void mouseEntered(MouseEvent e){}
+
+    @Override
+    public void mouseReleased(MouseEvent e) {}
+
+    @Override 
+    public void mouseExited(MouseEvent e) {}
+
+    @Override
+    public void mouseClicked(MouseEvent e) {}
 
 
     @Override

@@ -29,17 +29,14 @@
 
 - Carte : Fait le 29/07/25
 
-- Animation de sprite quand on marche, quand on attaque (pour joueur & pnjs), quand on loot un item, quand une animation est nécessaire en bref.
-    └──> Animation pour quand on ouvre l'inventaire et la carte 
+- Animation de sprite quand on marche, quand on attaque (pour joueur & pnjs), quand on loot un item, quand une animation est nécessaire en bref : Fait le 10/08/25
 
 - Mettre de la musique au jeu
 
 - Cinématiques
 
-- Paufiner les attaques : Quand plusieurs ennemis peuvent être touchés, une seule victime.
-
 - Système de quêtes : L'UI pour ça est déjà dans l'inventaire.
-    ├──> Créer une classe quête avec constructeur qui prend : PNJ qui donne, description, titre, map dans laquelle ça se passe.
+    ├──> Créer une classe quête avec constructeur qui prend : PNJ qui donne, description, titre, map dans laquelle ça se passe, étapes.
     └──> Affiche que les titres dans l'inventaire, quand on clique sur l'un d'eux, remplace par la quête cliquée.
     
 - Sauvegardes avec liaison BDD ou Json (en local) (préférence pour Json en vrai)
